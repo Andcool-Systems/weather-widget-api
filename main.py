@@ -10,7 +10,6 @@ from PIL import Image, ImageDraw, ImageFont
 import requests
 from io import BytesIO
 
-
 app = Flask(__name__)
 limiter = Limiter(
     get_remote_address,
