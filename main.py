@@ -30,7 +30,7 @@ notAlowed = {
     
 config_dict = get_default_config()
 config_dict['language'] = 'ru'
-wind_r = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']
+wind_r = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW', 'N']
 fnt_big = ImageFont.truetype("manrope-bold.ttf", 25)
 fnt_med = ImageFont.truetype("manrope-bold.ttf", 15)
 fnt_small = ImageFont.truetype("manrope-bold.ttf", 13)
@@ -41,8 +41,8 @@ windArrow = Image.open("wind.png")
 def getWeather(place):
     owm = pyowm.OWM('61d202e168925f843260a7f646f65118', config_dict)
     mgr = owm.weather_manager()
-    try:
-    #if True:
+    #try:
+    if True:
         observation = mgr.weather_at_place(place)
         w = observation.weather
 
@@ -99,8 +99,8 @@ def getWeather(place):
             sizeCounter -= 0.5
         draw.text((offset + 10, 95), detailedStatusText, font=detailedStatusFont, fill=(255, 255, 255, 255))
         return mainImage
-    except Exception as e:
-        print(e)
+    #except Exception as e:
+        #print(e)
 	
 
 class Quote(Resource):
