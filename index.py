@@ -1,33 +1,12 @@
-from flask import Flask, send_file, request
-from flask_restful import Api, Resource
-from flask_cors import CORS
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
-from io import BytesIO
+import json
 import pyowm
 from pyowm.utils.config import get_default_config
 from PIL import Image, ImageDraw, ImageFont
+import io
+import base64
 import requests
 from io import BytesIO
 
-app = Flask(__name__)
-limiter = Limiter(
-    get_remote_address,
-    app=app,
-    default_limits=["200 per day", "50 per hour"],
-    storage_uri="memory://",
-)
-
-app = Flask(__name__)
-api = Api(app)
-
-cors = CORS(app)
-app.config['CORS_HEADERS'] = 'Content-Type'
-notAlowed = {
-	"status": "error",
-	"message": "The method is not allowed for the requested URL."
-    }
-    
 config_dict = get_default_config()
 config_dict['language'] = 'ru'
 wind_r = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW', 'N']
@@ -37,12 +16,11 @@ fnt_small = ImageFont.truetype("manrope-bold.ttf", 13)
 fnt_very_small = ImageFont.truetype("manrope-bold.ttf", 7)
 windArrow = Image.open("wind.png")
 
-
 def getWeather(place):
     owm = pyowm.OWM('61d202e168925f843260a7f646f65118', config_dict)
     mgr = owm.weather_manager()
-    #try:
-    if True:
+    try:
+    #if True:
         observation = mgr.weather_at_place(place)
         w = observation.weather
 
@@ -99,36 +77,35 @@ def getWeather(place):
             sizeCounter -= 0.5
         draw.text((offset + 10, 95), detailedStatusText, font=detailedStatusFont, fill=(255, 255, 255, 255))
         return mainImage
-    #except Exception as e:
-        #print(e)
-	
-
-class Quote(Resource):
-	@limiter.limit("10/second")
-	def get(self, method=None):
-		if method == None: return "Weather widget API", 200
-		if method == "weather": 
-			argsNF = request.args
-			args = argsNF.to_dict()
-
-			image = getWeather(args["place"])
-			if image == None: return {"status": "error", "message": "internal server error"}, 500
-			bio = BytesIO()
-			bio.name = f"weather{id}.png"
-			image.save(bio, "PNG")
-			bio.seek(0)
-			return send_file(bio, mimetype='image/png')
-		return notAlowed, 405
+    except Exception as e:
+        print(e)
 
 
-api.add_resource(Quote, 
-                 "/", 
-                 "/<string:method>", 
-                 "/<string:method>/"
-                 )
+def handler(event, context):
+    image = getWeather(str(event["queryStringParameters"]["place"]))
+    if image == None: return {
+        "statusCode": 500,
+        "body": {"status": "error", "message": "internal server error"}
+    }
 
-app.run(host='0.0.0.0', port=8080)
+    # Преобразовываем изображение в байты
+    image_bytes = io.BytesIO()
+    image.save(image_bytes, format='PNG')  # Замените 'JPEG' на формат вашего изображения
 
+    # Получаем байты из объекта BytesIO
+    image_bytes = image_bytes.getvalue()
 
+    # Кодируем байты изображения в base64
+    encoded_image = base64.b64encode(image_bytes).decode('utf-8')
 
-
+    # Формируем ответ в виде словаря
+    response = {
+        "statusCode": 200,
+        "headers": {
+            "Content-Type": "image/png"  # Замените на нужный MIME-тип
+        },
+        "body": encoded_image,
+        "isBase64Encoded": True
+    }
+    return response
+    
