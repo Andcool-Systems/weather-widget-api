@@ -84,15 +84,13 @@ def getWeather(place):
 def handler(event, context):
     if 'place' not in event['queryStringParameters']:
         return {"statusCode": 400,
-                "body": 'Not found: place in query parameter'}
-    
-    match event['queryStringParameters']['place']:
-        case 'nightcity':
-            city = 'perm'
-        case 'andcool':
-            city = 'pskov'
-        case _:
-            city = event["queryStringParameters"]["place"]
+                "body": {"status": "error", "message": "Not found: place in query parameter"}}
+    if event['queryStringParameters']['place'] == 'nightcity':
+        city = 'perm'
+    elif event['queryStringParameters']['place'] == 'andcool':
+        city = 'pskov'
+    else:
+        city = event["queryStringParameters"]["place"]
     
     image = getWeather(city)
     
