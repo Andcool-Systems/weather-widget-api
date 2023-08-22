@@ -2,7 +2,6 @@ import json
 import pyowm
 from pyowm.utils.config import get_default_config
 from PIL import Image, ImageDraw, ImageFont
-import io
 import base64
 import requests
 from io import BytesIO
@@ -100,7 +99,7 @@ def handler(event, context):
     }
 
     # Преобразовываем изображение в байты
-    image_bytes = io.BytesIO()
+    image_bytes = BytesIO()
     image.save(image_bytes, format='PNG')  # Замените 'JPEG' на формат вашего изображения
 
     # Получаем байты из объекта BytesIO
