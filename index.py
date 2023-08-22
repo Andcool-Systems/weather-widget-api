@@ -95,7 +95,14 @@ def get_weather(place, timezone):
         #print(e)
 
 
+def landing():
+    return {"statusCode": 200, "body": "soon"}
+
+
 def handler(event, context):
+    if not event['queryStringParameters']:
+        return landing()
+    
     if 'place' not in event['queryStringParameters']:
         return {"statusCode": 400,
                 "body": {"status": "error", "message": "Not found: place in query parameter"}}
