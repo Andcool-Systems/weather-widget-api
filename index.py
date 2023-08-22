@@ -2,10 +2,11 @@ import json
 import pyowm
 from pyowm.utils.config import get_default_config
 from PIL import Image, ImageDraw, ImageFont
-import io
 import base64
 import requests
 from io import BytesIO
+from datetime import datetime
+import pytz
 
 config_dict = get_default_config()
 config_dict['language'] = 'ru'
@@ -13,14 +14,25 @@ wind_r = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW', 'N']
 fnt_big = ImageFont.truetype("manrope-bold.ttf", 25)
 fnt_med = ImageFont.truetype("manrope-bold.ttf", 15)
 fnt_small = ImageFont.truetype("manrope-bold.ttf", 13)
+fnt_med_small = ImageFont.truetype("manrope-bold.ttf", 11)
 fnt_very_small = ImageFont.truetype("manrope-bold.ttf", 7)
 windArrow = Image.open("wind.png")
 
-def getWeather(place):
+def get_weather(place, timezone):
     owm = pyowm.OWM('61d202e168925f843260a7f646f65118', config_dict)
     mgr = owm.weather_manager()
-    try:
-    #if True:
+    timezoneList = list(timezone)
+    timezoneListPreview = timezoneList.copy()
+    if timezoneList[3] == "-": timezoneList[3] = "+"
+    else: 
+        timezoneList.insert(3, "-")
+        timezoneListPreview.insert(3, "+")
+    newTimezone = "".join(timezoneList)
+    newTimezonePreview = "".join(timezoneListPreview)
+    nowTime = datetime.now(pytz.timezone(f"Etc/{newTimezone}"))
+
+    #try:
+    if True:
         observation = mgr.weather_at_place(place)
         w = observation.weather
 
@@ -34,6 +46,7 @@ def getWeather(place):
         detailedStatus = w.detailed_status
         pressure = w.pressure['press']
         visibilityDistance = w.visibility_distance
+        timeFormatted = f"На момент {nowTime.hour}:{nowTime.minute if nowTime.minute > 9 else '0' + str(nowTime.minute)} UTC{newTimezonePreview[-2:]}"
 
         response = requests.get(w.weather_icon_url(size='2x'))
         weatherIcon = Image.open(BytesIO(response.content)).resize((90, 90))
@@ -76,9 +89,10 @@ def getWeather(place):
             detailedStatusFont = ImageFont.truetype("manrope-bold.ttf", sizeCounter)
             sizeCounter -= 0.5
         draw.text((offset + 10, 95), detailedStatusText, font=detailedStatusFont, fill=(255, 255, 255, 255))
+        draw.text((offset + 10, 115), timeFormatted, font=fnt_med_small, fill=(200, 200, 200, 255))
         return mainImage
-    except Exception as e:
-        print(e)
+    #except Exception as e:
+        #print(e)
 
 
 def handler(event, context):
@@ -92,7 +106,12 @@ def handler(event, context):
     else:
         city = event["queryStringParameters"]["place"]
     
-    image = getWeather(city)
+    if 'timezone' not in event['queryStringParameters']: 
+        timezone = "GMT+0"
+    else: 
+        timezone = event['queryStringParameters']['timezone']
+
+    image = get_weather(city, timezone)
     
     if image == None: return {
         "statusCode": 500,
@@ -100,7 +119,7 @@ def handler(event, context):
     }
 
     # Преобразовываем изображение в байты
-    image_bytes = io.BytesIO()
+    image_bytes = BytesIO()
     image.save(image_bytes, format='PNG')  # Замените 'JPEG' на формат вашего изображения
 
     # Получаем байты из объекта BytesIO
@@ -113,7 +132,9 @@ def handler(event, context):
     response = {
         "statusCode": 200,
         "headers": {
-            "Content-Type": "image/png"  # Замените на нужный MIME-тип
+            "Content-Type": "image/png",
+            "Cache-Control": "no-cache",
+            "Age": 0
         },
         "body": encoded_image,
         "isBase64Encoded": True
