@@ -1,0 +1,52 @@
+body {
+    background: #151517;
+    margin: 0;
+    color: white;
+    font-family: 'Manrope', sans-serif;
+    text-align: center;
+}
+
+.title {
+    font-family: 'Inter', sans-serif;
+}
+
+.description {
+    margin-left: 50px;
+    margin-right: 50px;
+    margin-bottom: 50px;
+}
+
+a {
+    text-decoration: underline;
+    color: #3867ff;
+}
+
+input {
+    padding: 14px;
+    width: 260px;
+    border-radius: 12px;
+    border: none;
+    background-color: #1E1E20;
+    margin-bottom: 12px;
+    color: gray;
+}
+
+select {
+    padding: 14px;
+    width: 288px;
+    border-radius: 12px;
+    border: none;
+    background-color: #1E1E20;
+    color: gray;
+    margin-bottom: 30px;
+}
+
+button {
+    padding: 14px;
+    width: 120px;
+    border-radius: 12px;
+    border: none;
+    background-color: #1E1E20;
+    margin-bottom: 12px;
+    color: white;
+}

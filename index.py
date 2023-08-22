@@ -18,6 +18,7 @@ fnt_med_small = ImageFont.truetype("manrope-bold.ttf", 11)
 fnt_very_small = ImageFont.truetype("manrope-bold.ttf", 7)
 windArrow = Image.open("wind.png")
 
+
 def get_weather(place, timezone):
     owm = pyowm.OWM('61d202e168925f843260a7f646f65118', config_dict)
     mgr = owm.weather_manager()
@@ -96,7 +97,10 @@ def get_weather(place, timezone):
 
 
 def landing():
-    return {"statusCode": 200, "body": "soon"}
+    with open('page.html', mode='r') as file:
+        body = file.read()
+
+    return {"statusCode": 200, "body": body}
 
 
 def handler(event, context):
@@ -107,6 +111,7 @@ def handler(event, context):
         return {"statusCode": 400,
                 "body": {"status": "error", "message": "Not found: place in query parameter"}}
     if event['queryStringParameters']['place'] == 'nightcity':
+        # Если ты нашёл эту фичу - молодец. Теперь ты знаешь что такое nightcity на самом деле.
         city = 'perm'
     elif event['queryStringParameters']['place'] == 'andcool':
         city = 'pskov'

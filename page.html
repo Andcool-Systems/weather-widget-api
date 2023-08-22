@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Погода</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@800&family=Manrope:wght@600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <h3 class="title" style="margin-top: 30px">Weather Widget</h3>
+    <p class="description">Виджет погоды для вашего сайта или профиля GitHub (например, как <a href="https://github.com/wavy-cat">тут</a> или <a href="https://github.com/Andcool-Systems">тут</a>)</p>
+
+    <h4 class="title">Генератор</h4>
+
+    <input type="text" id="city" name="city" placeholder="Название города" oninput="updateURL()"> <br>
+
+    <select id="timezone" name="timezone" onchange="updateURL()">
+        <option value="">По умолчанию (GMT+0)</option>
+        <option value="gmt1">GMT+1</option>
+        <option value="gmt2">GMT+2</option>
+        <option value="gmt3">GMT+3 (Москва, Псков)</option>
+        <option value="gmt4">GMT+4</option>
+        <option value="gmt5">GMT+5 (Екатеринбург, Уфа)</option>
+        <option value="gmt6">GMT+6</option>
+        <option value="gmt7">GMT+7</option>
+        <option value="gmt8">GMT+8</option>
+        <option value="gmt9">GMT+9</option>
+        <option value="gmt10">GMT+10</option>
+        <option value="gmt11">GMT+11</option>
+        <option value="gmt12">GMT+12</option>
+        <option value="gmt-3">GMT-3</option>
+        <option value="gmt-4">GMT-4</option>
+        <option value="gmt-5">GMT-5</option>
+        <option value="gmt-6">GMT-6</option>
+        <option value="gmt-7">GMT-7</option>
+        <option value="gmt-8">GMT-8</option>
+        <option value="gmt-9">GMT-9</option>
+        <option value="gmt-10">GMT-10</option>
+        <option value="gmt-11">GMT-11</option>
+        <option value="gmt-12">GMT-12</option>
+        <option value="gmt-13">GMT-13</option>
+        <option value="gmt-14">GMT-14</option>
+    </select>
+    <br>
+
+    <img id="weatherImage" src="https://weather.wavycat.ru/?place=moscow" alt="Погодное изображение">
+    <br>
+    <input id="url" style="margin-top: 15px;" readonly type="text" value="https://weather.wavycat.ru/?place=moscow">
+    <button onclick="copyURL()">Скопировать</button>
+
+    <script>
+         function copyURL() {
+            var cityName = document.getElementById("city").value;
+            var timezone = document.getElementById("timezone").value;
+
+            if (cityName === "") {
+                cityName = "moscow";
+            }
+
+            if (timezone === "") {
+                const text = "https://weather.wavycat.ru/?place=" + cityName;
+                navigator.clipboard.writeText(text);
+            } else {
+                const text = "https://weather.wavycat.ru/?place=" + cityName + "&timezone=" + timezone;
+                navigator.clipboard.writeText(text);
+            }
+             alert('Скопировано!')
+         }
+         function updateURL() {
+            var cityName = document.getElementById("city").value;
+            var timezone = document.getElementById("timezone").value;
+
+            if (cityName === "") {
+                cityName = "moscow";
+            }
+
+            if (timezone === "") {
+                document.getElementById("weatherImage").src = "https://weather.wavycat.ru/?place=" + cityName;
+                document.getElementById("url").value = "https://weather.wavycat.ru/?place=" + cityName;
+            } else {
+                document.getElementById("weatherImage").src = "https://weather.wavycat.ru/?place=" + cityName + "&timezone=" + timezone;
+                document.getElementById("url").value = "https://weather.wavycat.ru/?place=" + cityName + "&timezone=" + timezone;
+            }
+        }
+    </script>
+</body>
+</html>
