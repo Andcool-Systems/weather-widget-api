@@ -32,8 +32,8 @@ def get_weather(place, timezone):
     newTimezonePreview = "".join(timezoneListPreview)
     nowTime = datetime.now(pytz.timezone(f"Etc/{newTimezone}"))
 
-    #try:
-    if True:
+    try:
+    #if True:
         observation = mgr.weather_at_place(place)
         w = observation.weather
 
@@ -92,8 +92,8 @@ def get_weather(place, timezone):
         draw.text((offset + 10, 95), detailedStatusText, font=detailedStatusFont, fill=(255, 255, 255, 255))
         draw.text((offset + 10, 115), timeFormatted, font=fnt_med_small, fill=(200, 200, 200, 255))
         return mainImage
-    #except Exception as e:
-        #print(e)
+    except Exception as e:
+        print(e)
 
 
 def landing():
