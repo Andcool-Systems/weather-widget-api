@@ -112,7 +112,8 @@ def handler(event, context):
     response = {
         "statusCode": 200,
         "headers": {
-            "Content-Type": "image/png"  # Замените на нужный MIME-тип
+            "Content-Type": "image/png",
+            "Cache-Control": "no-cache"
         },
         "body": encoded_image,
         "isBase64Encoded": True
