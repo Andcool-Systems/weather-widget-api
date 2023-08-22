@@ -105,7 +105,7 @@ def handler(event, context):
     
     if 'place' not in event['queryStringParameters']:
         return {"statusCode": 400,
-                "body": {"status": "error", "message": "place query parametr not found"}}
+                "body": {"status": "error", "message": "place query parameter not found"}}
     if event['queryStringParameters']['place'] == 'nightcity':
         city = 'perm'
     elif event['queryStringParameters']['place'] == 'andcool':
