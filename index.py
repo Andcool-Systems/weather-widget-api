@@ -100,7 +100,7 @@ def landing():
     with open('page.html', mode='r') as file:
         body = file.read()
 
-    return {"statusCode": 200, "body": body}
+    return {"statusCode": 200, "headers": {"Content-type": "text/html; charset=UTF-8"}, "body": body}
 
 
 def handler(event, context):
