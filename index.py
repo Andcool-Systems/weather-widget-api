@@ -113,7 +113,8 @@ def handler(event, context):
         "statusCode": 200,
         "headers": {
             "Content-Type": "image/png",
-            "Cache-Control": "no-cache"
+            "Cache-Control": "no-cache",
+            "Age": 0
         },
         "body": encoded_image,
         "isBase64Encoded": True
