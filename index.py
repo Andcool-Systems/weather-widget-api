@@ -109,7 +109,7 @@ def handler(event, context):
     
     if 'place' not in event['queryStringParameters']:
         return {"statusCode": 400,
-                "body": {"status": "error", "message": "Not found: place in query parameter"}}
+                "body": {"status": "error", "message": "place query parameter not found"}}
     if event['queryStringParameters']['place'] == 'nightcity':
         # Если ты нашёл эту фичу - молодец. Теперь ты знаешь что такое nightcity на самом деле.
         city = 'perm'
