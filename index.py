@@ -107,7 +107,7 @@ def handler(event, context):
         city = event["queryStringParameters"]["place"]
     
     if 'timezone' not in event['queryStringParameters']: 
-        timezone = "GMT+0"
+        timezone = "GMT0"
     else: 
         timezone = event['queryStringParameters']['timezone']
 
