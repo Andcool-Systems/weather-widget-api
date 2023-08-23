@@ -51,6 +51,13 @@
             <option value="gmt-13">GMT-13</option>
             <option value="gmt-14">GMT-14</option>
         </select>
+        
+        <select id="language" name="language" onchange="updateURL()">
+            <option value="ru">По умолчанию (Русский)</option>
+            <option value="en">Английский</option>
+        </select>
+
+
         <img id="weatherImage" src="https://weather.wavycat.ru/?place=moscow" alt="Погодное изображение">
 
         <div id="link">
@@ -77,6 +84,7 @@
          function updateURL() {
             var cityName = document.getElementById("city").value;
             var timezone = document.getElementById("timezone").value;
+            var lang = document.getElementById("language").value;
 
             if (cityName === "") {
                 cityName = "moscow";
@@ -88,7 +96,7 @@
             }else{
                 var timezone = "&timezone=" + timezone
             }
-
+            var timezone = "&language=" + lang
             document.getElementById("weatherImage").src = "https://weather.wavycat.ru/" + city + timezone;
             document.getElementById("url").value = "https://weather.wavycat.ru/" + city + timezone;
             
