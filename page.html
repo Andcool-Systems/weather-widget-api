@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@800&family=Manrope:wght@600&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="style.css">
     <html prefix="og: http://ogp.me/ns#">
 			<meta property="og:title" content="Weather Widget">
 			<meta property="og:site_name" content="weather.wavycat.ru">
@@ -88,141 +90,18 @@
                 cityName = "moscow";
             }
 
+            var city = "?place=" + cityName
             if (timezone === "") {
-                document.getElementById("weatherImage").src = "https://weather.wavycat.ru/?place=" + cityName;
-                document.getElementById("url").value = "https://weather.wavycat.ru/?place=" + cityName;
-            } else {
-                document.getElementById("weatherImage").src = "https://weather.wavycat.ru/?place=" + cityName + "&timezone=" + timezone;
-                document.getElementById("url").value = "https://weather.wavycat.ru/?place=" + cityName + "&timezone=" + timezone;
+                var timezone = ""
+            }else{
+                var timezone = "&timezone=" + timezone
             }
+
+            document.getElementById("weatherImage").src = "https://weather.wavycat.ru/" + city + timezone;
+            document.getElementById("url").value = "https://weather.wavycat.ru/" + city + timezone;
+            
         }
     </script>
 
-    <style>
-        .footer_text{
-            font-size: 90%;
-            margin: 0%;
-            text-align: left;
-        }
-
-        footer{
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            display: grid;
-            justify-items: start;
-        }
-        #link{
-            min-height:100%;
-        }
-
-        body {
-            background: #151517;
-            margin: 0;
-            color: white;
-            font-family: 'Manrope', sans-serif;
-            text-align: center;
-        }
-
-        .title {
-            font-family: 'Inter', sans-serif;
-        }
-
-        .description {
-            margin-bottom: 1%;
-        }
-
-        #github_link {
-            text-decoration: underline;
-            color: #3867ff;
-        }
-
-        input {
-            padding: 3.5%;
-            width: 260px;
-            border-radius: 12px;
-            border: none;
-            background-color: #1E1E20;
-            margin-bottom: 1%;
-            color: gray;
-        }
-
-        #city {
-            padding: 0.9%;
-            width: 16%;
-            border-radius: 12px;
-            border: none;
-            background-color: #1E1E20;
-            margin-bottom: 1%;
-            color: gray;
-        }
-
-        select {
-            padding: 0.9%;
-            width: 18%;
-            border-radius: 12px;
-            border: none;
-            background-color: #1E1E20;
-            color: gray;
-            margin-bottom: 1.5%;
-        }
-
-        button {
-            padding: 3.5%;
-            width: 50%;
-            border-radius: 12px;
-            border: none;
-            background-color: #1E1E20;
-            color: white;
-            margin-left: 2%;
-            cursor: pointer;
-        }
-
-        #main{
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        #link{
-            display: flex;
-            align-items: center;
-        }
-
-        #weatherImage{
-            margin-bottom: 1%;
-        }
-        @media(max-width: 425px){
-            
-            .title {
-                font-size: 100%;
-            }
-
-            .description {
-                margin-left: 2%;
-                margin-right: 2%;
-                margin-bottom: 3%;
-            }
-
-            #weatherImage{
-                margin-bottom: 2%;
-            }
-
-            #timezone{
-                width: 80%;
-                padding: 3%;
-                margin-bottom: 3%;
-            }
-
-            #city{
-                width: 74%;
-                padding: 3%;
-                margin-bottom: 3%;
-            }
-            .footer_text{
-                font-size: 70%;
-            }
-        }
-    </style>
 </body>
 </html>
