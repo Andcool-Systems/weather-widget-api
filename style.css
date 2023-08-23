@@ -2,6 +2,7 @@
     font-size: 90%;
     margin: 0%;
     text-align: left;
+    white-space: nowrap;
 }
 
 footer{
@@ -162,6 +163,12 @@ button {
         margin-bottom: 3%;
     }
 
+    #language{
+        width: 80%;
+        padding: 3%;
+        margin-bottom: 3%;
+    }
+
     #city{
         width: 74%;
         padding: 3%;
@@ -169,5 +176,9 @@ button {
     }
     .footer_text{
         font-size: 70%;
+        margin-left: 5%;
+    }
+    #down{
+        margin-bottom: 5%; 
     }
 }
