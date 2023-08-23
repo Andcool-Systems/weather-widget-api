@@ -96,9 +96,9 @@
             }else{
                 var timezone = "&timezone=" + timezone
             }
-            var timezone = "&language=" + lang
-            document.getElementById("weatherImage").src = "https://weather.wavycat.ru/" + city + timezone;
-            document.getElementById("url").value = "https://weather.wavycat.ru/" + city + timezone;
+            var langTxt = "&language=" + lang
+            document.getElementById("weatherImage").src = "https://weather.wavycat.ru/" + city + timezone + langTxt;
+            document.getElementById("url").value = "https://weather.wavycat.ru/" + city + timezone + langTxt;
             
         }
     </script>
