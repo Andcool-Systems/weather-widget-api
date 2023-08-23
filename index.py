@@ -10,7 +10,6 @@ import pytz
 
 config_dict = get_default_config()
 config_dict['language'] = 'ru'
-wind_r = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW', 'N']
 fnt_big = ImageFont.truetype("manrope-bold.ttf", 25)
 fnt_med = ImageFont.truetype("manrope-bold.ttf", 15)
 fnt_small = ImageFont.truetype("manrope-bold.ttf", 13)
@@ -48,7 +47,7 @@ def get_weather(place, timezone, language):
         feelsLikeTemp = tempDict['feels_like']
         windSpeed = w.wind()['speed']
         windDirection = w.wind()['deg']
-        windStr = wind_r[round((windDirection) / 45)]
+        windStr = lang['wind_dir'][language][round((windDirection) / 45)]
         humidity = w.humidity
         detailedStatus = w.detailed_status
         pressure = w.pressure['press']
@@ -134,7 +133,7 @@ def handler(event, context):
     else: 
         language = event['queryStringParameters']['language']
 
-    image, status = get_weather(city, timezone, language)
+    image, status = get_weather(city, timezone, language.lower())
 
     if status == 404: return {
         "statusCode": 404,
