@@ -15,9 +15,10 @@
 	</html>
 </head>
 <body>
+    <div id="snackbar">Скопировано!</div>
     <h3 class="title" style="margin-top: 30px">Weather Widget</h3>
     <p class="description">Виджет погоды для вашего сайта или профиля GitHub (например, как <a href="https://github.com/wavy-cat" id="github_link">тут</a> или <a id="github_link" href="https://github.com/Andcool-Systems">тут</a>)</p>
-
+    
     <div id="main">
         <h4 class="title">Генератор</h4>
 
@@ -66,21 +67,12 @@
     </div>
     <script>
          function copyURL() {
-            var cityName = document.getElementById("city").value;
-            var timezone = document.getElementById("timezone").value;
+            var urlText = document.querySelector("#url");
+			navigator.clipboard.writeText(urlText.value);
 
-            if (cityName === "") {
-                cityName = "moscow";
-            }
-
-            if (timezone === "") {
-                const text = "https://weather.wavycat.ru/?place=" + cityName;
-                navigator.clipboard.writeText(text);
-            } else {
-                const text = "https://weather.wavycat.ru/?place=" + cityName + "&timezone=" + timezone;
-                navigator.clipboard.writeText(text);
-            }
-             alert('Скопировано!')
+            var x = document.getElementById("snackbar");
+            x.className = "show";
+            setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
          }
          function updateURL() {
             var cityName = document.getElementById("city").value;
