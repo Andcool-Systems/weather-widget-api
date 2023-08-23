@@ -17,10 +17,13 @@ fnt_small = ImageFont.truetype("manrope-bold.ttf", 13)
 fnt_med_small = ImageFont.truetype("manrope-bold.ttf", 11)
 fnt_very_small = ImageFont.truetype("manrope-bold.ttf", 7)
 windArrow = Image.open("wind.png")
+with open('lang.json', 'r', encoding="utf-8") as openfile:
+    lang = json.load(openfile)
 
-
-def get_weather(place, timezone):
+def get_weather(place, timezone, language):
     status = 200
+    config_dict = get_default_config()
+    config_dict['language'] = language
     owm = pyowm.OWM('61d202e168925f843260a7f646f65118', config_dict)
     mgr = owm.weather_manager()
     timezoneList = list(timezone)
@@ -33,8 +36,8 @@ def get_weather(place, timezone):
     newTimezonePreview = "".join(timezoneListPreview)
     nowTime = datetime.now(pytz.timezone(f"Etc/{newTimezone}"))
 
-    #try:
-    if True:
+    try:
+    #if True:
         try:
             observation = mgr.weather_at_place(place)
         except pyowm.commons.exceptions.NotFoundError: return None, 404
@@ -50,7 +53,7 @@ def get_weather(place, timezone):
         detailedStatus = w.detailed_status
         pressure = w.pressure['press']
         visibilityDistance = w.visibility_distance
-        timeFormatted = f"На момент {nowTime.hour}:{nowTime.minute if nowTime.minute > 9 else '0' + str(nowTime.minute)} UTC{newTimezonePreview[-2:]}"
+        timeFormatted = f"{lang['at_the_moment'][language]} {nowTime.hour}:{nowTime.minute if nowTime.minute > 9 else '0' + str(nowTime.minute)} UTC{newTimezonePreview[-2:]}"
 
         response = requests.get(w.weather_icon_url(size='2x'))
         weatherIcon = Image.open(BytesIO(response.content)).resize((90, 90))
@@ -81,9 +84,9 @@ def get_weather(place, timezone):
         mainImage.paste(arrowRotated, (offset + 10, 15), arrowRotated)
 
         draw.text((offset + 30, 16), f"{round(windSpeed, 1)}m/s {windStr}", font=fnt_small, fill=(255, 255, 255, 255))
-        draw.text((offset + 10, 35), f"{round(pressure / 1.333, 1)} мм рт. ст.", font=fnt_small, fill=(255, 255, 255, 255))
-        draw.text((offset + 10, 55), f"Влажность: {humidity}%", font=fnt_small, fill=(255, 255, 255, 255))
-        draw.text((offset + 10, 75), f"Видимость: {round(visibilityDistance / 1000, 1)}км", font=fnt_small, fill=(255, 255, 255, 255))
+        draw.text((offset + 10, 35), f"{round(pressure / 1.333, 1)} {lang['pressure'][language]}", font=fnt_small, fill=(255, 255, 255, 255))
+        draw.text((offset + 10, 55), f"{lang['humidity'][language]}: {humidity}%", font=fnt_small, fill=(255, 255, 255, 255))
+        draw.text((offset + 10, 75), f"{lang['visibility'][language]}: {round(visibilityDistance / 1000, 1)}{lang['visibility_range'][language]}", font=fnt_small, fill=(255, 255, 255, 255))
         draw.text((7, height - 13), "by AndcoolSystems", font=fnt_very_small, fill=(180, 180, 180, 255))
         
         detailedStatusText = detailedStatus.capitalize()
@@ -95,8 +98,8 @@ def get_weather(place, timezone):
         draw.text((offset + 10, 95), detailedStatusText, font=detailedStatusFont, fill=(255, 255, 255, 255))
         draw.text((offset + 10, 115), timeFormatted, font=fnt_med_small, fill=(200, 200, 200, 255))
         return mainImage, status
-   # except Exception as e:
-    #    print(e)
+    except Exception as e:
+        print(e)
 
 
 def landing():
@@ -126,7 +129,12 @@ def handler(event, context):
     else: 
         timezone = event['queryStringParameters']['timezone']
 
-    image, status = get_weather(city, timezone)
+    if 'language' not in event['queryStringParameters']: 
+        language = "ru"
+    else: 
+        language = event['queryStringParameters']['language']
+
+    image, status = get_weather(city, timezone, language)
 
     if status == 404: return {
         "statusCode": 404,
