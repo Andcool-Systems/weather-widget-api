@@ -20,6 +20,7 @@ windArrow = Image.open("wind.png")
 
 
 def get_weather(place, timezone):
+    status = 200
     owm = pyowm.OWM('61d202e168925f843260a7f646f65118', config_dict)
     mgr = owm.weather_manager()
     timezoneList = list(timezone)
@@ -32,9 +33,11 @@ def get_weather(place, timezone):
     newTimezonePreview = "".join(timezoneListPreview)
     nowTime = datetime.now(pytz.timezone(f"Etc/{newTimezone}"))
 
-    try:
-    #if True:
-        observation = mgr.weather_at_place(place)
+    #try:
+    if True:
+        try:
+            observation = mgr.weather_at_place(place)
+        except pyowm.commons.exceptions.NotFoundError: return None, 404
         w = observation.weather
 
         tempDict = w.temperature("celsius")
@@ -91,9 +94,9 @@ def get_weather(place, timezone):
             sizeCounter -= 0.5
         draw.text((offset + 10, 95), detailedStatusText, font=detailedStatusFont, fill=(255, 255, 255, 255))
         draw.text((offset + 10, 115), timeFormatted, font=fnt_med_small, fill=(200, 200, 200, 255))
-        return mainImage
-    except Exception as e:
-        print(e)
+        return mainImage, status
+   # except Exception as e:
+    #    print(e)
 
 
 def landing():
@@ -123,8 +126,12 @@ def handler(event, context):
     else: 
         timezone = event['queryStringParameters']['timezone']
 
-    image = get_weather(city, timezone)
-    
+    image, status = get_weather(city, timezone)
+
+    if status == 404: return {
+        "statusCode": 404,
+        "body": {"status": "error", "message": f"place '{city}' not found"}
+    }
     if image == None: return {
         "statusCode": 500,
         "body": {"status": "error", "message": "internal server error"}
