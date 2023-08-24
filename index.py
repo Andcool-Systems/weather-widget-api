@@ -101,21 +101,22 @@ def get_weather(place, timezone, language):
         print(e)
 
 
-def landing():
-    with open('page.html', mode='r') as file:
-        body = file.read()
-
-    return {"statusCode": 200, "headers": {"Content-type": "text/html; charset=UTF-8"}, "body": body}
-
-
 def handler(event, context):
     if not event['queryStringParameters']:
-        return landing()
+        with open('page.html', mode='r') as file:
+            body = file.read()
+
+        return {"statusCode": 200, "headers": {"Content-type": "text/html; charset=UTF-8"}, "body": body}
     
     if 'place' not in event['queryStringParameters']:
-        return {"statusCode": 400,
-                "body": {"status": "error", "message": "place query parameter not found"}}
-    if event['queryStringParameters']['place'] == 'nightcity':
+        return {
+            "statusCode": 400,
+            "body": {
+                "status": "error",
+                "message": "`place` query parameter not found"
+            }
+        }
+    elif event['queryStringParameters']['place'] == 'nightcity':
         # Если ты нашёл эту фичу - молодец. Теперь ты знаешь что такое nightcity на самом деле.
         city = 'perm'
     elif event['queryStringParameters']['place'] == 'andcool':
@@ -135,14 +136,17 @@ def handler(event, context):
 
     image, status = get_weather(city, timezone, language.lower())
 
-    if status == 404: return {
-        "statusCode": 404,
-        "body": {"status": "error", "message": f"place '{city}' not found"}
-    }
-    if image == None: return {
-        "statusCode": 500,
-        "body": {"status": "error", "message": "internal server error"}
-    }
+    if status == 404:
+        return {
+            "statusCode": 404,
+            "body": {"status": "error", "message": f"place '{city}' not found"}
+        }
+
+    if not image:
+        return {
+            "statusCode": 500,
+            "body": {"status": "error", "message": "internal server error"}
+        }
 
     # Преобразовываем изображение в байты
     image_bytes = BytesIO()
