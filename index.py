@@ -19,6 +19,7 @@ windArrow = Image.open("wind.png")
 with open('lang.json', 'r', encoding="utf-8") as openfile:
     lang = json.load(openfile)
 
+
 def get_weather(place, timezone, language):
     status = 200
     config_dict = get_default_config()
@@ -102,13 +103,15 @@ def get_weather(place, timezone, language):
 
 
 def handler(event, context):
-    if not event['queryStringParameters']:
+    parameters = event['queryStringParameters']
+
+    if not parameters:
         with open('page.html', mode='r') as file:
             body = file.read()
 
         return {"statusCode": 200, "headers": {"Content-type": "text/html; charset=UTF-8"}, "body": body}
     
-    if 'place' not in event['queryStringParameters']:
+    if 'place' not in parameters:
         return {
             "statusCode": 400,
             "body": {
@@ -116,23 +119,17 @@ def handler(event, context):
                 "message": "`place` query parameter not found"
             }
         }
-    elif event['queryStringParameters']['place'] == 'nightcity':
+    elif parameters['place'] == 'nightcity':
         # Если ты нашёл эту фичу - молодец. Теперь ты знаешь что такое nightcity на самом деле.
         city = 'perm'
-    elif event['queryStringParameters']['place'] == 'andcool':
+    elif parameters['place'] == 'andcool':
         city = 'pskov'
     else:
-        city = event["queryStringParameters"]["place"]
-    
-    if 'timezone' not in event['queryStringParameters']: 
-        timezone = "GMT0"
-    else: 
-        timezone = event['queryStringParameters']['timezone']
+        city = parameters["place"]
 
-    if 'language' not in event['queryStringParameters']: 
-        language = "ru"
-    else: 
-        language = event['queryStringParameters']['language']
+    timezone = "GMT0" if 'timezone' not in parameters else parameters['timezone']
+    language = 'ru' if 'language' not in parameters else parameters['language']
+    embed = False if 'enable_embed' not in parameters else parameters['enable_embed']
 
     image, status = get_weather(city, timezone, language.lower())
 
