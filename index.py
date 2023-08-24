@@ -178,7 +178,7 @@ def handler(event, context):
     if embed and event['requestContext']['identity']['userAgent'] == discord_user_agent:
         weather = get_raw_weather(city, language)
         if not weather: return {"statusCode": 404, "body": {"status": "error", "message": f"place '{city}' not found"}}
-        return build_embed(weather, city, language)
+        return {'statusCode': 200, 'body': build_embed(weather, city, language)}
     else:
         image, status = get_weather(city, timezone, language.lower())
 
