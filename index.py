@@ -8,19 +8,18 @@ from io import BytesIO
 from datetime import datetime
 import pytz
 
-config_dict = get_default_config()
-config_dict['language'] = 'ru'
-fnt_big = ImageFont.truetype("manrope-bold.ttf", 25)
-fnt_med = ImageFont.truetype("manrope-bold.ttf", 15)
-fnt_small = ImageFont.truetype("manrope-bold.ttf", 13)
-fnt_med_small = ImageFont.truetype("manrope-bold.ttf", 11)
-fnt_very_small = ImageFont.truetype("manrope-bold.ttf", 7)
-windArrow = Image.open("wind.png")
-with open('lang.json', 'r', encoding="utf-8") as openfile:
-    lang = json.load(openfile)
-
 
 def get_weather(place, timezone, language):
+    fnt_big = ImageFont.truetype("manrope-bold.ttf", 25)
+    fnt_med = ImageFont.truetype("manrope-bold.ttf", 15)
+    fnt_small = ImageFont.truetype("manrope-bold.ttf", 13)
+    fnt_med_small = ImageFont.truetype("manrope-bold.ttf", 11)
+    fnt_very_small = ImageFont.truetype("manrope-bold.ttf", 7)
+    windArrow = Image.open("wind.png")
+
+    with open('lang.json', 'r', encoding="utf-8") as openfile:
+        lang = json.load(openfile)
+
     status = 200
     config_dict = get_default_config()
     config_dict['language'] = language
@@ -100,6 +99,10 @@ def get_weather(place, timezone, language):
         return mainImage, status
     except Exception as e:
         print(e)
+
+
+def get_raw_weather(place):
+
 
 
 def handler(event, context):
