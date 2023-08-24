@@ -8,6 +8,9 @@ from io import BytesIO
 from datetime import datetime
 import pytz
 
+with open('lang.json', 'r', encoding="utf-8") as openfile:
+    lang = json.load(openfile)
+
 
 def get_weather(place, timezone, language):
     fnt_big = ImageFont.truetype("manrope-bold.ttf", 25)
@@ -17,9 +20,6 @@ def get_weather(place, timezone, language):
     fnt_very_small = ImageFont.truetype("manrope-bold.ttf", 7)
     windArrow = Image.open("wind.png")
 
-    with open('lang.json', 'r', encoding="utf-8") as openfile:
-        lang = json.load(openfile)
-
     status = 200
     config_dict = get_default_config()
     config_dict['language'] = language
@@ -28,7 +28,7 @@ def get_weather(place, timezone, language):
     timezoneList = list(timezone)
     timezoneListPreview = timezoneList.copy()
     if timezoneList[3] == "-": timezoneList[3] = "+"
-    else: 
+    else:
         timezoneList.insert(3, "-")
         timezoneListPreview.insert(3, "+")
     newTimezone = "".join(timezoneList)
@@ -56,7 +56,7 @@ def get_weather(place, timezone, language):
 
         response = requests.get(w.weather_icon_url(size='2x'))
         weatherIcon = Image.open(BytesIO(response.content)).resize((90, 90))
-        
+
         width = 345
         height = 145
 
@@ -68,7 +68,7 @@ def get_weather(place, timezone, language):
         temp = f"{round(temp)}°C"
         tempWidth = fnt_big.getbbox(text=temp)[2]
         tempHeight = fnt_big.getbbox(text=temp)[3]
-        
+
         feelsLike = f"fl: {round(feelsLikeTemp)}°C"
         feelsLikeWidth = fnt_med.getbbox(text=feelsLike)[2]
         feelsLikeHeight = fnt_med.getbbox(text=feelsLike)[3]
@@ -87,7 +87,7 @@ def get_weather(place, timezone, language):
         draw.text((offset + 10, 55), f"{lang['humidity'][language]}: {humidity}%", font=fnt_small, fill=(255, 255, 255, 255))
         draw.text((offset + 10, 75), f"{lang['visibility'][language]}: {round(visibilityDistance / 1000, 1)}{lang['visibility_range'][language]}", font=fnt_small, fill=(255, 255, 255, 255))
         draw.text((7, height - 13), "by AndcoolSystems", font=fnt_very_small, fill=(180, 180, 180, 255))
-        
+
         detailedStatusText = detailedStatus.capitalize()
         sizeCounter = 15
         detailedStatusFont = ImageFont.truetype("manrope-bold.ttf", sizeCounter)
@@ -101,8 +101,48 @@ def get_weather(place, timezone, language):
         print(e)
 
 
-def get_raw_weather(place):
+def get_raw_weather(place, language) -> dict | None:
+    config_dict = get_default_config()
+    config_dict['language'] = language
 
+    owm = pyowm.OWM('61d202e168925f843260a7f646f65118', config_dict)
+    mgr = owm.weather_manager()
+
+    try:
+        observation = mgr.weather_at_place(place)
+    except pyowm.commons.exceptions.NotFoundError:
+        return None
+
+    w = observation.weather
+    wind = w.wind()
+
+    return {
+        'detailed_status': w.detailed_status,
+        'wind': {'speed': wind['speed'], 'position': lang['wind_dir'][language][round((wind['deg']) / 45)]},
+        'humidity': w.humidity,
+        'temperature': w.temperature('celsius')
+    }
+
+
+def build_embed(weather, city, language):
+    if not language or language == 'ru':
+        return f"""
+        <html prefix="og: http://ogp.me/ns#">
+            <meta property="og:title" content="Погода в {city}">
+            <meta property="og:site_name" content="weather.wavycat.ru">
+            <meta property="og:url" content="https://weather.wavycat.ru">
+            <meta property="og:description" content="* {weather['detailed_status']}* Ветер: {weather['wind']['speed']} {weather['wind']['position']}\n* Влажность: {weather['humidity']}%\n* Температура: {weather['temperature']}">
+        </html>
+        """
+    elif language == 'en':
+        return f"""
+        <html prefix="og: http://ogp.me/ns#">
+        	<meta property="og:title" content="Weather in {city}">
+        	<meta property="og:site_name" content="weather.wavycat.ru">
+        	<meta property="og:url" content="https://weather.wavycat.ru">
+        	<meta property="og:description" content="* {weather['detailed_status']}* Wind: {weather['wind']['speed']} {weather['wind']['position']}\n* Humidity: {weather['humidity']}%\n* Temperature: {weather['temperature']}">
+        </html>
+        """
 
 
 def handler(event, context):
@@ -113,7 +153,7 @@ def handler(event, context):
             body = file.read()
 
         return {"statusCode": 200, "headers": {"Content-type": "text/html; charset=UTF-8"}, "body": body}
-    
+
     if 'place' not in parameters:
         return {
             "statusCode": 400,
@@ -133,8 +173,14 @@ def handler(event, context):
     timezone = "GMT0" if 'timezone' not in parameters else parameters['timezone']
     language = 'ru' if 'language' not in parameters else parameters['language']
     embed = False if 'enable_embed' not in parameters else parameters['enable_embed']
+    discord_user_agent = 'Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)'
 
-    image, status = get_weather(city, timezone, language.lower())
+    if embed and event['requestContext']['identity']['userAgent'] == discord_user_agent:
+        weather = get_raw_weather(city, language)
+        if not weather: return {"statusCode": 404, "body": {"status": "error", "message": f"place '{city}' not found"}}
+        return build_embed(weather, city, language)
+    else:
+        image, status = get_weather(city, timezone, language.lower())
 
     if status == 404:
         return {
@@ -170,4 +216,3 @@ def handler(event, context):
         "isBase64Encoded": True
     }
     return response
-    
