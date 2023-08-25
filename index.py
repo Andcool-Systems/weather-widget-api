@@ -101,50 +101,6 @@ def get_weather(place, timezone, language):
         print(e)
 
 
-def get_raw_weather(place, language) -> dict | None:
-    config_dict = get_default_config()
-    config_dict['language'] = language
-
-    owm = pyowm.OWM('61d202e168925f843260a7f646f65118', config_dict)
-    mgr = owm.weather_manager()
-
-    try:
-        observation = mgr.weather_at_place(place)
-    except pyowm.commons.exceptions.NotFoundError:
-        return None
-
-    w = observation.weather
-    wind = w.wind()
-
-    return {
-        'detailed_status': w.detailed_status,
-        'wind': {'speed': wind['speed'], 'position': lang['wind_dir'][language][round((wind['deg']) / 45)]},
-        'humidity': w.humidity,
-        'temperature': w.temperature('celsius')
-    }
-
-
-def build_embed(weather, city, language):
-    if not language or language == 'ru':
-        return f"""
-        <html prefix="og: http://ogp.me/ns#">
-            <meta property="og:title" content="Погода в {city}">
-            <meta property="og:site_name" content="weather.wavycat.ru">
-            <meta property="og:url" content="https://weather.wavycat.ru">
-            <meta property="og:description" content="* {weather['detailed_status']}* Ветер: {weather['wind']['speed']} {weather['wind']['position']}\n* Влажность: {weather['humidity']}%\n* Температура: {weather['temperature']}">
-        </html>
-        """
-    elif language == 'en':
-        return f"""
-        <html prefix="og: http://ogp.me/ns#">
-        	<meta property="og:title" content="Weather in {city}">
-        	<meta property="og:site_name" content="weather.wavycat.ru">
-        	<meta property="og:url" content="https://weather.wavycat.ru">
-        	<meta property="og:description" content="* {weather['detailed_status']}* Wind: {weather['wind']['speed']} {weather['wind']['position']}\n* Humidity: {weather['humidity']}%\n* Temperature: {weather['temperature']}">
-        </html>
-        """
-
-
 def handler(event, context):
     parameters = event['queryStringParameters']
 
