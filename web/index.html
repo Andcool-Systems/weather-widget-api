@@ -58,10 +58,10 @@
         </select>
 
 
-        <img id="weatherImage" src="https://weather.wavycat.ru/?place=moscow" alt="Погодное изображение">
+        <img id="weatherImage" src="https://weather.wavycat.ru/api?place=moscow" alt="Ошибка генерации">
 
         <div id="link">
-            <input id="url" readonly type="text" value="https://weather.wavycat.ru/?place=moscow">
+            <input id="url" readonly type="text" value="https://weather.wavycat.ru/api?place=moscow">
             <button onclick="copyURL()">Скопировать</button>
         </div>
 
@@ -97,11 +97,10 @@
                 var timezone = "&timezone=" + timezone
             }
             var langTxt = "&language=" + lang
-            document.getElementById("weatherImage").src = "https://weather.wavycat.ru/" + city + timezone + langTxt;
-            document.getElementById("url").value = "https://weather.wavycat.ru/" + city + timezone + langTxt;
+            document.getElementById("weatherImage").src = "https://weather.wavycat.ru/api" + city + timezone + langTxt;
+            document.getElementById("url").value = "https://weather.wavycat.ru/api" + city + timezone + langTxt;
             
         }
     </script>
-
 </body>
 </html>
