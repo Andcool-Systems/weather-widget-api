@@ -105,14 +105,9 @@ def handler(event, context):
     parameters = event['queryStringParameters']
 
     if 'place' not in parameters:
-        return {
-            "statusCode": 400,
-            "body": {
-                "status": "error",
-                "message": "`place` query parameter not found"
-            }
-        }
-    elif parameters['place'] == 'nightcity':
+        return {"statusCode": 400, "body": {"status": "error", "message": "`place` query parameter not found"}}
+
+    if parameters['place'] == 'nightcity':
         # Если ты нашёл эту фичу - молодец. Теперь ты знаешь что такое nightcity на самом деле.
         city = 'perm'
     elif parameters['place'] == 'andcool':
@@ -122,15 +117,8 @@ def handler(event, context):
 
     timezone = "GMT0" if 'timezone' not in parameters else parameters['timezone']
     language = 'ru' if 'language' not in parameters else parameters['language']
-    embed = False if 'enable_embed' not in parameters else parameters['enable_embed']
-    discord_user_agent = 'Mozilla/5.0 (compatible; Discordbot/2.0; +https://discordapp.com)'
 
-    if embed and event['requestContext']['identity']['userAgent'] == discord_user_agent:
-        weather = get_raw_weather(city, language)
-        if not weather: return {"statusCode": 404, "body": {"status": "error", "message": f"place '{city}' not found"}}
-        return {'statusCode': 200, 'body': build_embed(weather, city, language)}
-    else:
-        image, status = get_weather(city, timezone, language.lower())
+    image, status = get_weather(city, timezone, language.lower())
 
     if status == 404:
         return {
