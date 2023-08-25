@@ -101,10 +101,6 @@ def get_weather(place, timezone, language):
         print(e)
 
 
-def get_raw_weather(place):
-
-
-
 def handler(event, context):
     parameters = event['queryStringParameters']
 
