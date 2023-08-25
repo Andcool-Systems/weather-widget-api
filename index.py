@@ -104,12 +104,6 @@ def get_weather(place, timezone, language):
 def handler(event, context):
     parameters = event['queryStringParameters']
 
-    if not parameters:
-        with open('page.html', mode='r') as file:
-            body = file.read()
-
-        return {"statusCode": 200, "headers": {"Content-type": "text/html; charset=UTF-8"}, "body": body}
-
     if 'place' not in parameters:
         return {
             "statusCode": 400,
