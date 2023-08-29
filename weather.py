@@ -3,9 +3,6 @@ from pyowm.utils.config import get_default_config
 
 
 class Weather:
-    location: str
-    temperature_type: str
-    config_dict: dict
     detailed_status: str
     wind: dict
     humidity: int
