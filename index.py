@@ -38,7 +38,7 @@ def handler(event, context):
         image = DefaultTheme(weather, language, timezone).image
     except Exception as e:
         uid = str(uuid.uuid4())
-        print(uid, e)
+        print(json.dumps({'message': {'uuid': uid, 'msg': str(e)}, 'level': 'ERROR'}))
 
         return {
             "statusCode": 500,
