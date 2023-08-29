@@ -9,6 +9,9 @@ class Weather:
     temperature: dict
     rain: dict
     clouds: int
+    pressure = None
+    visibility_distance = None
+    weather_icon_url = None
 
     def __init__(self, location: str, language: str = 'ru', temperature_type: str = 'celsius'):
         self.location = location
@@ -30,3 +33,6 @@ class Weather:
         self.temperature = w.temperature(self.temperature_type)
         self.rain = w.rain
         self.clouds = w.clouds
+        self.pressure = w.pressure
+        self.visibility_distance = w.visibility_distance
+        self.weather_icon_url = w.weather_icon_url

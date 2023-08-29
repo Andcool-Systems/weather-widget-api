@@ -3,8 +3,9 @@ from PIL import Image
 
 
 class BaseTheme:
-    def __init__(self, weather_object: weather.Weather):
+    def __init__(self, weather_object: weather.Weather, language: str):
         self.weather = weather_object
+        self.language = language
 
     @property
     def image(self) -> Image:
