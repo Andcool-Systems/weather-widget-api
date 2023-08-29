@@ -7,9 +7,6 @@ import base64
 from io import BytesIO
 import pyowm
 
-with open('lang.json', 'r', encoding="utf-8") as openfile:
-    lang = json.load(openfile)
-
 
 def handler(event, context):
     parameters = event['queryStringParameters']

@@ -16,16 +16,16 @@ class DefaultTheme(BaseTheme):
     @property
     def image(self) -> Image:
         # Load language from config
-        with open('lang.json', 'r', encoding='utf-8') as file:
+        with open('themes/default/lang.json', 'r', encoding='utf-8') as file:
             lang = json.load(file)
 
         # Load fonts and image
-        fnt_big = ImageFont.truetype("manrope-bold.ttf", 25)
-        fnt_med = ImageFont.truetype("manrope-bold.ttf", 15)
-        fnt_small = ImageFont.truetype("manrope-bold.ttf", 13)
-        fnt_med_small = ImageFont.truetype("manrope-bold.ttf", 11)
-        fnt_very_small = ImageFont.truetype("manrope-bold.ttf", 7)
-        windArrow = Image.open("wind.png")
+        fnt_big = ImageFont.truetype("themes/default/manrope-bold.ttf", 25)
+        fnt_med = ImageFont.truetype("themes/default/manrope-bold.ttf", 15)
+        fnt_small = ImageFont.truetype("themes/default/manrope-bold.ttf", 13)
+        fnt_med_small = ImageFont.truetype("themes/default/manrope-bold.ttf", 11)
+        fnt_very_small = ImageFont.truetype("themes/default/manrope-bold.ttf", 7)
+        windArrow = Image.open("themes/default/wind.png")
 
         # Adaptive timezone
         timezoneList = list(self.timezone)
@@ -62,9 +62,9 @@ class DefaultTheme(BaseTheme):
         width, height = 345, 145
 
         # Load image
-        mainImage = Image.open("background.png")
+        mainImage = Image.open("themes/default/background.png")
         mainImage.paste(weatherIcon, (0, height // 2 - 90 // 2), weatherIcon)
-        line = Image.open("line.png")
+        line = Image.open("themes/default/line.png")
         draw = ImageDraw.Draw(mainImage)
 
         # Дальше я отказываюсь от комментариев
@@ -99,9 +99,9 @@ class DefaultTheme(BaseTheme):
 
         detailedStatusText = detailedStatus.capitalize()
         sizeCounter = 15
-        detailedStatusFont = ImageFont.truetype("manrope-bold.ttf", sizeCounter)
+        detailedStatusFont = ImageFont.truetype("themes/default/manrope-bold.ttf", sizeCounter)
         while detailedStatusFont.getbbox(text=detailedStatusText)[2] > (width - 10) - (offset + 10):
-            detailedStatusFont = ImageFont.truetype("manrope-bold.ttf", sizeCounter)
+            detailedStatusFont = ImageFont.truetype("themes/default/manrope-bold.ttf", sizeCounter)
             sizeCounter -= 0.5
         draw.text((offset + 10, 95), detailedStatusText, font=detailedStatusFont, fill=(255, 255, 255, 255))
         draw.text((offset + 10, 115), timeFormatted, font=fnt_med_small, fill=(200, 200, 200, 255))
