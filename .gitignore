@@ -1,4 +1,5 @@
 /__pycache__
+/themes/__pycache__
 /pyowm.zip
 /start.py
 /test.py

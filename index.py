@@ -6,9 +6,11 @@ from themes.default.default import DefaultTheme
 import base64
 from io import BytesIO
 import pyowm
+import pytz
 
 
 def handler(event, context):
+    lang = ["ru", "en"]
     parameters = event['queryStringParameters']
 
     if 'place' not in parameters:
@@ -25,6 +27,12 @@ def handler(event, context):
     timezone = "GMT0" if 'timezone' not in parameters else parameters['timezone']
     language = 'ru' if 'language' not in parameters else parameters['language']
 
+    if language not in lang:
+        return {
+            "statusCode": 404,
+            "body": {"status": "error", "message": f"language '{language}' not found"}
+        }
+
     try:
         weather = Weather(city, language)
         weather.get_current()
@@ -36,6 +44,12 @@ def handler(event, context):
 
     try:
         image = DefaultTheme(weather, language, timezone).image
+    except pytz.exceptions.UnknownTimeZoneError:
+        return {
+            "statusCode": 404,
+            "body": {"status": "error", "message": f"Timezone '{timezone}' not found"}
+        }
+
     except Exception as e:
         uid = str(uuid.uuid4())
         print(json.dumps({'message': {'uuid': uid, 'msg': str(e)}, 'level': 'ERROR'}))
