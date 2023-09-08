@@ -6,6 +6,7 @@ class BaseTheme:
     def __init__(self, weather_object: weather.Weather, language: str):
         self.weather = weather_object
         self.language = language
+        self.supported_language = []
 
     @property
     def image(self) -> Image:

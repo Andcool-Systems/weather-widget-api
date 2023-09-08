@@ -10,7 +10,6 @@ import pytz
 
 
 def handler(event, context):
-    lang = ["ru", "en"]
     parameters = event['queryStringParameters']
 
     if 'place' not in parameters:
@@ -27,12 +26,6 @@ def handler(event, context):
     timezone = "GMT0" if 'timezone' not in parameters else parameters['timezone']
     language = 'ru' if 'language' not in parameters else parameters['language']
 
-    if language not in lang:
-        return {
-            "statusCode": 404,
-            "body": {"status": "error", "message": f"language '{language}' not found"}
-        }
-
     try:
         weather = Weather(city, language)
         weather.get_current()
@@ -43,7 +36,11 @@ def handler(event, context):
         }
 
     try:
-        image = DefaultTheme(weather, language, timezone).image
+        theme = DefaultTheme(weather, language, timezone)
+        if language not in theme.supported_language:
+            return {"statusCode": 404,
+                    "body": {"status": "error", "message": f"language '{language}' not found"}}
+        image = theme.image
     except pytz.exceptions.UnknownTimeZoneError:
         return {
             "statusCode": 404,

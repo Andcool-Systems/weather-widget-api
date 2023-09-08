@@ -12,6 +12,7 @@ class DefaultTheme(BaseTheme):
     def __init__(self, weather_object: weather.Weather, language: str, timezone):
         super().__init__(weather_object, language)
         self.timezone = timezone
+        self.supported_language = ['ru', 'en']
 
     @property
     def image(self) -> Image:
