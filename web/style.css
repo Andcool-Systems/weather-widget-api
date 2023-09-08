@@ -68,14 +68,14 @@ select {
 }
 
 button {
-    padding: 3.5%;
-    width: 50%;
+    padding: 8%;
     border-radius: 12px;
     border: none;
     background-color: #1E1E20;
     color: white;
     margin-left: 2%;
     cursor: pointer;
+    white-space: nowrap;
 }
 
 #main{
@@ -84,13 +84,19 @@ button {
     align-items: center;
 }
 
-#link{
+
+#buttons{
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
 #weatherImage{
     margin-bottom: 1%;
+}
+#url{
+    padding: 1%;
+
 }
 
 /* The snackbar - position it at the bottom and in the middle of the screen */
@@ -180,5 +186,8 @@ button {
     }
     #down{
         margin-bottom: 5%; 
+    }
+    #url{
+        padding: 4%;
     }
 }
