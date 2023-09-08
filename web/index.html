@@ -63,6 +63,7 @@
         <div id="link">
             <input id="url" readonly type="text" value="https://weather.wavycat.ru/api?place=moscow">
             <button onclick="copyURL()">Скопировать</button>
+            <button onclick="copyShortURL()">Короткий URL</button>
         </div>
 
         <footer>
@@ -73,15 +74,30 @@
         </footer>
     </div>
     <script>
-         function copyURL() {
+        function createShortUrl(url) {
+            return fetch('https://clck.ru/--' + '?url=' + encodeURIComponent(url))
+                .then(response => response.text());
+        }
+        function copyShortURL() {
+            (async function() {
+              var urlText = document.querySelector("#url");
+              const text = await createShortUrl(urlText.value);
+              await navigator.clipboard.writeText(text);
+
+              var x = document.getElementById("snackbar");
+              x.className = "show";
+              setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+            })();
+        }
+        function copyURL() {
             var urlText = document.querySelector("#url");
 			navigator.clipboard.writeText(urlText.value);
 
             var x = document.getElementById("snackbar");
             x.className = "show";
             setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
-         }
-         function updateURL() {
+        }
+        function updateURL() {
             var cityName = document.getElementById("city").value;
             var timezone = document.getElementById("timezone").value;
             var lang = document.getElementById("language").value;
@@ -91,12 +107,11 @@
             }
 
             var city = "?place=" + cityName
-            if (timezone === "") {
-                var timezone = ""
-            }else{
+            var langTxt = "&language=" + lang
+
+            if (timezone !== "") {
                 var timezone = "&timezone=" + timezone
             }
-            var langTxt = "&language=" + lang
             document.getElementById("weatherImage").src = "https://weather.wavycat.ru/api" + city + timezone + langTxt;
             document.getElementById("url").value = "https://weather.wavycat.ru/api" + city + timezone + langTxt;
             
