@@ -74,20 +74,15 @@
         </footer>
     </div>
     <script>
-        function createShortUrl(url) {
-            return fetch('https://clck.ru/--' + '?url=' + encodeURIComponent(url))
+        async function copyShortURL() {
+            var urlText = document.querySelector("#url");
+            const text = await fetch('https://clck.ru/--' + '?url=' + encodeURIComponent(urlText.value))
                 .then(response => response.text());
-        }
-        function copyShortURL() {
-            (async function() {
-              var urlText = document.querySelector("#url");
-              const text = await createShortUrl(urlText.value);
-              await navigator.clipboard.writeText(text);
+            await navigator.clipboard.writeText(text);
 
-              var x = document.getElementById("snackbar");
-              x.className = "show";
-              setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
-            })();
+            var x = document.getElementById("snackbar");
+            x.className = "show";
+            setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
         }
         function copyURL() {
             var urlText = document.querySelector("#url");
