@@ -22,3 +22,6 @@ jobs:
         with:
           name: code
           path: code.zip
+
+      - name: Install CLI
+        run: curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
