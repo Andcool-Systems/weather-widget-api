@@ -13,8 +13,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Create Zip Archive
-        run: |
-          zip -r code.zip .
+        run: zip -r code.zip .
         working-directory: ${{ github.workspace }}
 
       - name: Upload Archive
@@ -24,7 +23,8 @@ jobs:
           path: code.zip
 
       - name: Install CLI
-        run: curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
+        run: curl https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash -s -- -i /opt/yc -n
+        working-directory: ${{ github.workspace }}
 
       - name: Execute CLI
-        run: yc help
+        run: /opt/yc help
