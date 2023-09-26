@@ -1,0 +1,24 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "auto-deploy" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create Zip Archive
+        run: |
+          zip -r code.zip .
+        working-directory: ${{ github.workspace }}
+
+      - name: Upload Archive
+        uses: actions/upload-artifact@v2
+        with:
+          name: code
+          path: code.zip
