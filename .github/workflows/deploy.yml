@@ -24,7 +24,6 @@ jobs:
 
       - name: Install CLI
         run: curl https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash -s -- -i /opt/yc -n
-        working-directory: ${{ github.workspace }}
 
       - name: Execute CLI
-        run: cd /opt/yc/bin/yc help
+        run: /opt/yc/bin/yc help
