@@ -27,4 +27,4 @@ jobs:
         working-directory: ${{ github.workspace }}
 
       - name: Execute CLI
-        run: cd /opt/yc/bin && ls
+        run: cd /opt/yc/bin/yc help
