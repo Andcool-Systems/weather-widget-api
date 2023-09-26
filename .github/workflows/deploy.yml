@@ -25,3 +25,6 @@ jobs:
 
       - name: Install CLI
         run: curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
+
+      - name: Execute CLI
+        run: yc help
