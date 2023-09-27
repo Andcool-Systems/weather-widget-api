@@ -24,6 +24,7 @@ class Weather:
         self.mgr = owm.weather_manager()
 
     def get_current(self):
+        # Да...
         observation = self.mgr.weather_at_place(self.location)
         w = observation.weather
 
