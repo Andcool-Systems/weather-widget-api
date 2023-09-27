@@ -16,14 +16,24 @@ jobs:
         run: zip -r code.zip .
         working-directory: ${{ github.workspace }}
 
-      - name: Upload Archive
-        uses: actions/upload-artifact@v2
-        with:
-          name: code
-          path: code.zip
-
       - name: Install CLI
         run: curl https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash -s -- -i /opt/yc -n
 
-      - name: Execute CLI
-        run: /opt/yc/bin/yc help
+      - name: Create key.json file
+        run: echo "${{ secrets.KEY }}" > key.json
+        working-directory: ${{ github.workspace }}
+
+      - name: Create new profile in CLI
+        run: /opt/yc/bin/yc config profile create func-auth
+
+      - name: Add authorised key
+        run: /opt/yc/bin/yc config set service-account-key $GITHUB_WORKSPACE/key.json
+
+      - name: Specify the cloud identifier
+        run: /opt/yc/bin/yc config set cloud-id ${{ secrets.CLOUD_ID }}
+
+      - name: Specify the folder identifier
+        run: /opt/yc/bin/yc config set folder-id ${{ secrets.FOLDER_ID }}
+
+      - name: Create new version of function
+        run: /opt/yc/bin/yc serverless function version create --function-id ${{ secrets.FUNCTION_ID }} --function-name weather-widget --runtime python311 --entrypoint index.handler --execution-timeout 5s --source-path $GITHUB_WORKSPACE/code.zip --log-folder-name default
