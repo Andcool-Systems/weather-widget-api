@@ -36,4 +36,4 @@ jobs:
         run: /opt/yc/bin/yc config set folder-id ${{ secrets.FOLDER_ID }}
 
       - name: Create new version of function
-        run: /opt/yc/bin/yc serverless function version create --function-id ${{ secrets.FUNCTION_ID }} --function-name weather-widget --runtime python311 --entrypoint index.handler --execution-timeout 5s --source-path $GITHUB_WORKSPACE/code.zip --log-folder-name default
+        run: /opt/yc/bin/yc serverless function version create --function-id ${{ secrets.FUNCTION_ID }} --runtime python311 --entrypoint index.handler --execution-timeout 5s --source-path $GITHUB_WORKSPACE/code.zip --log-folder-name default
