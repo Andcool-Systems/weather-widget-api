@@ -97,6 +97,7 @@
             x.className = "show";
             setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
         }
+
         function copyURL() {
             var urlText = document.querySelector("#url");
 			navigator.clipboard.writeText(urlText.value);
@@ -105,6 +106,7 @@
             x.className = "show";
             setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
         }
+        
         function updateURL() {
             var cityName = document.getElementById("city").value;
             var timezone = document.getElementById("timezone").value;
