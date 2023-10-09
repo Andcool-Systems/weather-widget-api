@@ -32,19 +32,33 @@ def handler(event, context):
     except pyowm.commons.exceptions.NotFoundError:
         return {
             "statusCode": 404,
-            "body": {"status": "error", "message": f"place '{city}' not found"}
+            "body": {
+                "status": "error",
+                "code": "place_not_found",
+                "message": f"Place '{city}' not found"
+            }
         }
 
     try:
         theme = DefaultTheme(weather, language, timezone)
         if language not in theme.supported_language:
-            return {"statusCode": 404,
-                    "body": {"status": "error", "message": f"language '{language}' not found"}}
+            return {
+                "statusCode": 400,
+                "body": {
+                    "status": "error",
+                    "code": "lang_not_found",
+                    "message": f"Language '{language}' not found. Use `ru` or `en`"
+                }
+            }
         image = theme.image
     except pytz.exceptions.UnknownTimeZoneError:
         return {
-            "statusCode": 404,
-            "body": {"status": "error", "message": f"Timezone '{timezone}' not found"}
+            "statusCode": 400,
+            "body": {
+                "status": "error",
+                "code": "tz_not_found",
+                "message": f"Timezone '{timezone}' not found. Use gmt(a number between -14 and 12)"
+            }
         }
 
     except Exception as e:
@@ -53,7 +67,12 @@ def handler(event, context):
 
         return {
             "statusCode": 500,
-            "body": {"status": "error", "message": "internal server error", "error_uuid": uid}
+            "body": {
+                "status": "error",
+                "code": "internal_error",
+                "message": "internal server error",
+                "error_uuid": uid
+            }
         }
 
     # Преобразовываем изображение в байты
