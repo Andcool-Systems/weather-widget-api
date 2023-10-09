@@ -1,7 +1,7 @@
 import json
 from themes.base import BaseTheme
 from PIL import Image, ImageFont, ImageDraw
-import weather
+from pyowm.weatherapi25.weather import Weather
 from datetime import datetime
 import pytz
 import requests
@@ -9,7 +9,7 @@ from io import BytesIO
 
 
 class DefaultTheme(BaseTheme):
-    def __init__(self, weather_object: weather.Weather, language: str, timezone):
+    def __init__(self, weather_object: Weather, language: str, timezone):
         super().__init__(weather_object, language)
         self.timezone = timezone
         self.supported_language = ['ru', 'en']
@@ -41,11 +41,13 @@ class DefaultTheme(BaseTheme):
         nowTime = datetime.now(pytz.timezone(f"Etc/{newTimezone}"))
 
         # Get weather data
-        tempDict = self.weather.temperature
+        tempDict = self.weather.temperature('celsius')
         temp = tempDict['temp']
         feelsLikeTemp = tempDict['feels_like']
-        windSpeed = self.weather.wind['speed']
-        windDirection = self.weather.wind['deg']
+
+        wind = self.weather.wind()
+        windSpeed = wind['speed']
+        windDirection = wind['deg']
         windStr = lang['wind_dir'][self.language][round(windDirection / 45)]
         humidity = self.weather.humidity
         detailedStatus = self.weather.detailed_status
