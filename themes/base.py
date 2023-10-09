@@ -1,9 +1,9 @@
-import weather
 from PIL import Image
+from pyowm.weatherapi25.weather import Weather
 
 
 class BaseTheme:
-    def __init__(self, weather_object: weather.Weather, language: str):
+    def __init__(self, weather_object: Weather, language: str):
         self.weather = weather_object
         self.language = language
         self.supported_language = []

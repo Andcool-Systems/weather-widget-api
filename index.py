@@ -1,11 +1,11 @@
 import json
 import uuid
 
-from weather import Weather
 from themes.default.default import DefaultTheme
 import base64
 from io import BytesIO
 import pyowm
+from pyowm.utils.config import get_default_config
 import pytz
 
 
@@ -17,30 +17,30 @@ def handler(event, context):
 
     if parameters['place'] == 'nightcity':
         # Если ты нашёл эту фичу - молодец. Теперь ты знаешь что такое nightcity на самом деле.
-        city = 'perm'
+        location = 'perm'
     elif parameters['place'] == 'andcool':
-        city = 'pskov'
+        location = 'pskov'
     else:
-        city = parameters["place"]
+        location = parameters["place"]
 
     timezone = "GMT0" if 'timezone' not in parameters else parameters['timezone']
     language = 'ru' if 'language' not in parameters else parameters['language']
 
     try:
-        weather = Weather(city, language)
-        weather.get_current()
-    except pyowm.commons.exceptions.NotFoundError:
-        return {
-            "statusCode": 404,
-            "body": {
-                "status": "error",
-                "code": "place_not_found",
-                "message": f"Place '{city}' not found"
-            }
-        }
+        # Устанавливаем язык
+        config_dict = get_default_config()
+        config_dict['language'] = language
 
-    try:
+        # Создаём всякую фигню и объект погоды
+        owm = pyowm.OWM('61d202e168925f843260a7f646f65118', config_dict)
+        mgr = owm.weather_manager()
+
+        observation = mgr.weather_at_place(location)
+        weather = observation.weather
+
+        # Создаём объект темы
         theme = DefaultTheme(weather, language, timezone)
+
         if language not in theme.supported_language:
             return {
                 "statusCode": 400,
@@ -50,7 +50,17 @@ def handler(event, context):
                     "message": f"Language '{language}' not found. Use `ru` or `en`"
                 }
             }
+
         image = theme.image
+    except pyowm.commons.exceptions.NotFoundError:
+        return {
+            "statusCode": 404,
+            "body": {
+                "status": "error",
+                "code": "place_not_found",
+                "message": f"Place '{location}' not found"
+            }
+        }
     except pytz.exceptions.UnknownTimeZoneError:
         return {
             "statusCode": 400,
@@ -60,7 +70,6 @@ def handler(event, context):
                 "message": f"Timezone '{timezone}' not found. Use gmt(a number between -14 and 12)"
             }
         }
-
     except Exception as e:
         uid = str(uuid.uuid4())
         print(json.dumps({'message': {'uuid': uid, 'msg': str(e)}, 'level': 'ERROR'}))
@@ -77,7 +86,7 @@ def handler(event, context):
 
     # Преобразовываем изображение в байты
     image_bytes = BytesIO()
-    image.save(image_bytes, format='PNG')  # Замените 'JPEG' на формат вашего изображения
+    image.save(image_bytes, format='PNG')
 
     # Получаем байты из объекта BytesIO
     image_bytes = image_bytes.getvalue()
