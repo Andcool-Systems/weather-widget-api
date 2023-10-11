@@ -11,7 +11,6 @@ import pytz
 
 def handler(event, context):
     parameters = event['queryStringParameters']
-
     if 'place' not in parameters:
         return {"statusCode": 400, "body": {"status": "error", "message": "`place` query parameter not found"}}
 
@@ -25,7 +24,6 @@ def handler(event, context):
 
     timezone = "GMT0" if 'timezone' not in parameters else parameters['timezone']
     language = 'ru' if 'language' not in parameters else parameters['language']
-
     try:
         # Устанавливаем язык
         config_dict = get_default_config()
@@ -37,7 +35,6 @@ def handler(event, context):
 
         observation = mgr.weather_at_place(location)
         weather = observation.weather
-
         # Создаём объект темы
         theme = DefaultTheme(weather, language, timezone)
 
@@ -51,7 +48,7 @@ def handler(event, context):
                 }
             }
 
-        image = theme.image
+        image = theme.image()
     except pyowm.commons.exceptions.NotFoundError:
         return {
             "statusCode": 404,

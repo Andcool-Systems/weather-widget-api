@@ -1,20 +1,20 @@
 import json
-from themes.base import BaseTheme
+#from themes.base import BaseTheme
 from PIL import Image, ImageFont, ImageDraw
-from pyowm.weatherapi25.weather import Weather
+#from pyowm.weatherapi25.weather import Weather
 from datetime import datetime
 import pytz
 import requests
 from io import BytesIO
 
 
-class DefaultTheme(BaseTheme):
-    def __init__(self, weather_object: Weather, language: str, timezone):
-        super().__init__(weather_object, language)
+class DefaultTheme():
+    def __init__(self, weather_object, language: str, timezone):
         self.timezone = timezone
         self.supported_language = ['ru', 'en']
+        self.weather = weather_object
+        self.language = language
 
-    @property
     def image(self) -> Image:
         # Load language from config
         with open('themes/default/lang.json', 'r', encoding='utf-8') as file:
