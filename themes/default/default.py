@@ -16,6 +16,7 @@ class DefaultTheme():
         self.language = language
 
     def image(self) -> Image:
+        
         # Load language from config
         with open('themes/default/lang.json', 'r', encoding='utf-8') as file:
             lang = json.load(file)
@@ -28,6 +29,7 @@ class DefaultTheme():
         fnt_very_small = ImageFont.truetype("themes/default/manrope-bold.ttf", 7)
         windArrow = Image.open("themes/default/wind.png")
 
+        
         # Adaptive timezone
         timezoneList = list(self.timezone)
         timezoneListPreview = timezoneList.copy()
@@ -38,6 +40,7 @@ class DefaultTheme():
             timezoneListPreview.insert(3, "+")
         newTimezone = "".join(timezoneList)
         newTimezonePreview = "".join(timezoneListPreview)
+        
         nowTime = datetime.now(pytz.timezone(f"Etc/{newTimezone}"))
 
         # Get weather data
