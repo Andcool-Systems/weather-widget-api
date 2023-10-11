@@ -28,7 +28,6 @@ def handler(event, context):
 
     timezone = "GMT0" if 'timezone' not in parameters else parameters['timezone']
     language = 'ru' if 'language' not in parameters else parameters['language']
-
     try:
         # Устанавливаем язык
         config_dict = get_default_config()
@@ -40,7 +39,6 @@ def handler(event, context):
 
         observation = mgr.weather_at_place(location)
         weather = observation.weather
-
         # Создаём объект темы
         theme = DefaultTheme(weather, language, timezone)
 
