@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/static/style.css">
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <html prefix="og: http://ogp.me/ns#">
 			<meta property="og:title" content="Weather Widget">
 			<meta property="og:site_name" content="weather.wavycat.ru">
@@ -75,6 +76,17 @@
         </footer>
     </div>
     <script>
+        async function load(){
+            var url = "https://ipinfo.io/json";
+            var data = await axios.get(url);
+            var obj = data.data;
+            var cityName = document.getElementById("city");
+            cityName.value = obj["city"];
+            updateURL();
+        }
+        function start(){load()};
+        start();
+
         async function copyShortURL() {
             var urlText = document.querySelector("#url");
             const text = await fetch('https://clck.ru/--' + '?url=' + encodeURIComponent(urlText.value))
@@ -85,6 +97,7 @@
             x.className = "show";
             setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
         }
+
         function copyURL() {
             var urlText = document.querySelector("#url");
 			navigator.clipboard.writeText(urlText.value);
@@ -93,6 +106,7 @@
             x.className = "show";
             setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
         }
+        
         function updateURL() {
             var cityName = document.getElementById("city").value;
             var timezone = document.getElementById("timezone").value;
@@ -112,6 +126,7 @@
             document.getElementById("url").value = "https://weather.wavycat.ru/api" + city + timezone + langTxt;
             
         }
+
     </script>
 </body>
 </html>
