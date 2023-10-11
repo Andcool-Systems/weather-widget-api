@@ -40,16 +40,7 @@ def handler(event, context):
         if language not in theme.supported_language:
             return {"statusCode": 404,
                     "body": {"status": "error", "message": f"language '{language}' not found"}}
-        image = theme.image
-    except pyowm.commons.exceptions.NotFoundError:
-        return {
-            "statusCode": 404,
-            "body": {
-                "status": "error",
-                "code": "place_not_found",
-                "message": f"Place '{location}' not found"
-            }
-        }
+        image = theme.image()
 
     except pytz.exceptions.UnknownTimeZoneError:
         return {
