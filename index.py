@@ -6,6 +6,7 @@ import base64
 from io import BytesIO
 import pyowm
 from pyowm.utils.config import get_default_config
+from pyowm.utils.config import get_default_config
 import pytz
 
 
@@ -17,9 +18,12 @@ def handler(event, context):
     if parameters['place'] == 'nightcity':
         # Если ты нашёл эту фичу - молодец. Теперь ты знаешь что такое nightcity на самом деле.
         location = 'perm'
+        location = 'perm'
     elif parameters['place'] == 'andcool':
         location = 'pskov'
+        location = 'pskov'
     else:
+        location = parameters["place"]
         location = parameters["place"]
 
     timezone = "GMT0" if 'timezone' not in parameters else parameters['timezone']
@@ -47,17 +51,7 @@ def handler(event, context):
                     "message": f"Language '{language}' not found. Use `ru` or `en`"
                 }
             }
-
         image = theme.image()
-    except pyowm.commons.exceptions.NotFoundError:
-        return {
-            "statusCode": 404,
-            "body": {
-                "status": "error",
-                "code": "place_not_found",
-                "message": f"Place '{location}' not found"
-            }
-        }
     except pytz.exceptions.UnknownTimeZoneError:
         return {
             "statusCode": 400,
