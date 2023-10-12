@@ -6,7 +6,6 @@ import base64
 from io import BytesIO
 import pyowm
 from pyowm.utils.config import get_default_config
-from pyowm.utils.config import get_default_config
 import pytz
 
 
@@ -18,16 +17,14 @@ def handler(event, context):
     if parameters['place'] == 'nightcity':
         # Если ты нашёл эту фичу - молодец. Теперь ты знаешь что такое nightcity на самом деле.
         location = 'perm'
-        location = 'perm'
     elif parameters['place'] == 'andcool':
         location = 'pskov'
-        location = 'pskov'
     else:
-        location = parameters["place"]
         location = parameters["place"]
 
     timezone = "GMT0" if 'timezone' not in parameters else parameters['timezone']
     language = 'ru' if 'language' not in parameters else parameters['language']
+
     try:
         # Устанавливаем язык
         config_dict = get_default_config()
@@ -39,6 +36,7 @@ def handler(event, context):
 
         observation = mgr.weather_at_place(location)
         weather = observation.weather
+
         # Создаём объект темы
         theme = DefaultTheme(weather, language, timezone)
 
