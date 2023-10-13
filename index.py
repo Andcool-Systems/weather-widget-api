@@ -48,8 +48,8 @@ def handler(event, context):
                     "message": f"Language '{language}' not found. Use `ru` or `en`"
                 }
             }
-        image = theme.image()
 
+        image = theme.image()
     except UnknownTimeZoneError:
         return {
             "statusCode": 400,
@@ -94,4 +94,5 @@ def handler(event, context):
         "body": encoded_image,
         "isBase64Encoded": True
     }
+
     return response
