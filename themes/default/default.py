@@ -18,9 +18,6 @@ class DefaultTheme:
         with open('themes/default/lang.json', 'r', encoding='utf-8') as file:
             lang = json_encode_file(file)
 
-        # Убрать потом
-        print(self.weather.weather_icon_url(size='2x'))
-
         # Load fonts and image
         fnt_big = ImageFont.truetype("themes/default/manrope-bold.ttf", 25)
         fnt_med = ImageFont.truetype("themes/default/manrope-bold.ttf", 15)
@@ -60,8 +57,9 @@ class DefaultTheme:
         timeFormatted = f"{lang['at_the_moment'][self.language]} {nowTime.hour}:{nowTime.minute if nowTime.minute > 9 else '0' + str(nowTime.minute)} UTC{newTimezonePreview[-2:]}"
 
         # Get icon
-        response = requests.get(self.weather.weather_icon_url(size='2x'))
-        weatherIcon = Image.open(BytesIO(response.content)).resize((90, 90))
+        icon_name = self.weather.weather_icon_url(size='2x').split('/')[-1]
+        print(icon_name)  # Убрать потом
+        weatherIcon = Image.open(f'themes/default/icons/{icon_name}').resize((90, 90))
 
         # Specify dimensions
         width, height = 345, 145
