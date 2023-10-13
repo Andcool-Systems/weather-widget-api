@@ -1,12 +1,11 @@
-import json
-import uuid
-
-from themes.default.default import DefaultTheme
-import base64
+from uuid import uuid4
+from json import dumps as json_encode
+from base64 import b64encode
 from io import BytesIO
-import pyowm
+from pyowm import OWM
 from pyowm.utils.config import get_default_config
-import pytz
+from pytz.exceptions import UnknownTimeZoneError
+from themes.default.default import DefaultTheme
 
 
 def handler(event, context):
@@ -31,7 +30,7 @@ def handler(event, context):
         config_dict['language'] = language
 
         # Создаём всякую фигню и объект погоды
-        owm = pyowm.OWM('61d202e168925f843260a7f646f65118', config_dict)
+        owm = OWM('61d202e168925f843260a7f646f65118', config_dict)
         mgr = owm.weather_manager()
 
         observation = mgr.weather_at_place(location)
@@ -51,7 +50,7 @@ def handler(event, context):
             }
         image = theme.image()
 
-    except pytz.exceptions.UnknownTimeZoneError:
+    except UnknownTimeZoneError:
         return {
             "statusCode": 400,
             "body": {
@@ -61,8 +60,8 @@ def handler(event, context):
             }
         }
     except Exception as e:
-        uid = str(uuid.uuid4())
-        print(json.dumps({'message': {'uuid': uid, 'msg': str(e)}, 'level': 'ERROR'}))
+        code = str(uuid4())
+        print(json_encode({'message': {'uuid': code, 'msg': str(e)}, 'level': 'ERROR'}))
 
         return {
             "statusCode": 500,
@@ -70,7 +69,7 @@ def handler(event, context):
                 "status": "error",
                 "code": "internal_error",
                 "message": "internal server error",
-                "error_uuid": uid
+                "error_uuid": code
             }
         }
 
@@ -82,7 +81,7 @@ def handler(event, context):
     image_bytes = image_bytes.getvalue()
 
     # Кодируем байты изображения в base64
-    encoded_image = base64.b64encode(image_bytes).decode('utf-8')
+    encoded_image = b64encode(image_bytes).decode('utf-8')
 
     # Формируем ответ в виде словаря
     response = {
