@@ -58,7 +58,6 @@ class DefaultTheme:
 
         # Get icon
         icon_name = self.weather.weather_icon_url(size='2x').split('/')[-1]
-        print(icon_name)  # Убрать потом
         weatherIcon = Image.open(f'themes/default/icons/{icon_name}').resize((90, 90))
 
         # Specify dimensions
