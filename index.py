@@ -13,13 +13,13 @@ def handler(event, context):
     if 'place' not in parameters:
         return {"statusCode": 400, "body": {"status": "error", "message": "`place` query parameter not found"}}
 
-    if parameters['place'] == 'nightcity':
-        # Если ты нашёл эту фичу - молодец. Теперь ты знаешь что такое nightcity на самом деле.
-        location = 'perm'
-    elif parameters['place'] == 'andcool':
-        location = 'pskov'
-    else:
-        location = parameters["place"]
+    match parameters['place']:
+        case 'nightcity':
+            location = 'perm'  # Easter egg
+        case 'andcool':
+            location = 'pskov'
+        case _:
+            location = parameters['place']
 
     timezone = "GMT0" if 'timezone' not in parameters else parameters['timezone']
     language = 'ru' if 'language' not in parameters else parameters['language']
