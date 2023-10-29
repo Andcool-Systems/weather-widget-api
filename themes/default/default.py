@@ -1,9 +1,7 @@
 from json import load as json_encode_file
 from PIL import Image, ImageFont, ImageDraw
 from datetime import datetime
-from io import BytesIO
 from pytz import timezone as pytz_tz
-import requests
 
 
 class DefaultTheme:
