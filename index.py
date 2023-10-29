@@ -4,9 +4,11 @@ from base64 import b64encode
 from io import BytesIO
 from pyowm import OWM
 from pyowm.utils.config import get_default_config
+from pyowm.commons.exceptions import NotFoundError
 from pytz.exceptions import UnknownTimeZoneError
 from themes.default.default import DefaultTheme
 from themes.pixel_city.city import PixelCityTheme
+from traceback import print_exception
 
 
 def handler(event, context):
@@ -67,6 +69,15 @@ def handler(event, context):
             }
 
         image = theme.image()
+    except NotFoundError:
+        return {
+            "statusCode": 400,
+            "body": {
+                "status": "error",
+                "code": "place_not_found",
+                "message": f"Place '{location}' not found."
+            }
+        }
     except UnknownTimeZoneError:
         return {
             "statusCode": 400,
@@ -79,6 +90,7 @@ def handler(event, context):
     except Exception as e:
         code = str(uuid4())
         print(json_encode({'message': {'uuid': code, 'msg': str(e)}, 'level': 'ERROR'}))
+        print_exception(e)
 
         return {
             "statusCode": 500,

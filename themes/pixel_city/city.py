@@ -1,4 +1,3 @@
-from json import load as json_encode_file
 from PIL import Image, ImageFont, ImageDraw
 
 
@@ -10,14 +9,15 @@ class PixelCityTheme:
 
     def image(self) -> Image:
         # Импортируем все необходимое
-        poppins = ImageFont.truetype("Poppins-SemiBold.ttf", 128)
-        montserrat = ImageFont.truetype("Montserrat-Medium.ttf", 64)
-        opensans = ImageFont.truetype("OpenSans-SemiBold.ttf", 48)
+        poppins = ImageFont.truetype("themes/pixel_city/Poppins-SemiBold.ttf", 128)
+        montserrat = ImageFont.truetype("themes/pixel_city/Montserrat-Medium.ttf", 64)
+        opensans = ImageFont.truetype("themes/pixel_city/OpenSans-SemiBold.ttf", 48)
 
         # Получаем данные о погоде
         temperature_info = self.weather.temperature('celsius')
-        temperature, temperature_fl = temperature_info['temp'], temperature_info['feels_like']
+        temperature, temperature_fl = round(temperature_info['temp']), round(temperature_info['feels_like'])
         details = self.weather.detailed_status
+        details = details[0].upper() + details[1:]
         humidity = self.weather.humidity
         visibility_distance = round(self.weather.visibility_distance / 1000)
         icon_name = self.weather.weather_icon_url().split('/')[-1]
@@ -68,7 +68,7 @@ class PixelCityTheme:
         temp_data = poppins.getbbox(text=text_temperature)
 
         for i in [(2, 2), (-2, 2), (2, -2), (-2, -2)]:
-            draw.text((1024 / 2 + i[0] - temp_data[2] / 2, 216 + i[1]), text_temperature, font=poppins, fill=(0, 0, 0, 1))
+            draw.text((1024 / 2 + i[0] - temp_data[2] / 2, 216 + i[1]), text_temperature, font=poppins, fill=(0, 0, 0, 100))
 
         draw.text((1024 / 2 - temp_data[2] / 2, 216), text_temperature, font=poppins, fill=(255, 255, 255, 255))
 
@@ -76,7 +76,7 @@ class PixelCityTheme:
         details_data = montserrat.getbbox(text=details)
 
         for i in [(2, 2), (-2, 2), (2, -2), (-2, -2)]:
-            draw.text((1024 / 2 + i[0] - details_data[2] / 2, 357 + i[1]), details, font=montserrat, fill=(0, 0, 0, 1))
+            draw.text((1024 / 2 + i[0] - details_data[2] / 2, 357 + i[1]), details, font=montserrat, fill=(0, 0, 0, 100))
 
         draw.text((1024 / 2 - details_data[2] / 2, 357), details, font=montserrat, fill=(250, 250, 250, 255))
 
@@ -84,8 +84,8 @@ class PixelCityTheme:
         other_data = opensans.getbbox(text=other_info)
 
         for i in [(2, 2), (-2, 2), (2, -2), (-2, -2)]:
-            draw.text((1024 / 2 + i[0] - other_data[2] / 2, 435 + i[1]), other_info, font=opensans, fill=(0, 0, 0, 1))
+            draw.text((1024 / 2 + i[0] - other_data[2] / 2, 435 + i[1]), other_info, font=opensans, fill=(0, 0, 0, 100))
 
         draw.text((1024 / 2 - other_data[2] / 2, 435), other_info, font=opensans, fill=(246, 245, 245, 255))
 
-
+        return source
