@@ -27,6 +27,7 @@ def handler(event, context):
     timezone = "GMT0" if 'timezone' not in parameters else parameters['timezone']
     language = 'ru' if 'language' not in parameters else parameters['language']
     theme = 'default' if 'theme' not in parameters else parameters['theme']
+    theme_size = 'small' if 'size' not in parameters else parameters['size']
 
     try:
         # Устанавливаем язык
@@ -45,7 +46,7 @@ def handler(event, context):
             case 'default':
                 theme = DefaultTheme(weather, language, timezone)
             case 'pixel-city':
-                theme = PixelCityTheme(weather, language)
+                theme = PixelCityTheme(weather, language, theme_size)
             case _:
                 return {
                     "statusCode": 400,

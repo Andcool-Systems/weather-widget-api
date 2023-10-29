@@ -2,16 +2,22 @@ from PIL import Image, ImageFont, ImageDraw
 
 
 class PixelCityTheme:
-    def __init__(self, weather_object, language: str):
+    def __init__(self, weather_object, language: str, theme_size: str):
         self.supported_language = ['ru', 'en']  # TODO: add jp
+        self.theme_size = theme_size
         self.weather = weather_object
         self.language = language
 
     def image(self) -> Image:
         # Импортируем все необходимое
-        poppins = ImageFont.truetype("themes/pixel_city/Poppins-SemiBold.ttf", 128)
-        montserrat = ImageFont.truetype("themes/pixel_city/Montserrat-Medium.ttf", 64)
-        opensans = ImageFont.truetype("themes/pixel_city/OpenSans-SemiBold.ttf", 48)
+        if self.theme_size == 'big':
+            poppins = ImageFont.truetype("themes/pixel_city/Poppins-SemiBold.ttf", 128)
+            montserrat = ImageFont.truetype("themes/pixel_city/Montserrat-Medium.ttf", 64)
+            opensans = ImageFont.truetype("themes/pixel_city/OpenSans-SemiBold.ttf", 48)
+        else:
+            poppins = ImageFont.truetype("themes/pixel_city/Poppins-SemiBold.ttf", 64)
+            montserrat = ImageFont.truetype("themes/pixel_city/Montserrat-Medium.ttf", 32)
+            opensans = ImageFont.truetype("themes/pixel_city/OpenSans-SemiBold.ttf", 24)
 
         # Получаем данные о погоде
         temperature_info = self.weather.temperature('celsius')
@@ -51,7 +57,11 @@ class PixelCityTheme:
             case '50n.png':
                 background_name = 'mist'
 
-        source = Image.open(f'themes/pixel_city/backgrounds/{background_name}.png')
+        if self.theme_size == 'big':
+            source = Image.open(f'themes/pixel_city/backgrounds/big/{background_name}.png')
+        else:
+            source = Image.open(f'themes/pixel_city/backgrounds/small/{background_name}.png')
+
         draw = ImageDraw.Draw(source)
 
         # Создаём текста
@@ -67,25 +77,50 @@ class PixelCityTheme:
         # Создаём текст температуры
         temp_data = poppins.getbbox(text=text_temperature)
 
-        for i in [(2, 2), (-2, 2), (2, -2), (-2, -2)]:
-            draw.text((1024 / 2 + i[0] - temp_data[2] / 2, 216 + i[1]), text_temperature, font=poppins, fill=(0, 0, 0, 100))
+        if self.theme_size == 'big':
+            for i in [(2, 2), (-2, 2), (2, -2), (-2, -2)]:
+                draw.text((1024 / 2 + i[0] - temp_data[2] / 2, 216 + i[1]), text_temperature, font=poppins, fill=(0, 0, 0, 100))
 
-        draw.text((1024 / 2 - temp_data[2] / 2, 216), text_temperature, font=poppins, fill=(255, 255, 255, 255))
+            draw.text((1024 / 2 - temp_data[2] / 2, 216), text_temperature, font=poppins, fill=(255, 255, 255, 255))
 
-        # Создаём текст деталей погоды
-        details_data = montserrat.getbbox(text=details)
+            # Создаём текст деталей погоды
+            details_data = montserrat.getbbox(text=details)
 
-        for i in [(2, 2), (-2, 2), (2, -2), (-2, -2)]:
-            draw.text((1024 / 2 + i[0] - details_data[2] / 2, 357 + i[1]), details, font=montserrat, fill=(0, 0, 0, 100))
+            for i in [(2, 2), (-2, 2), (2, -2), (-2, -2)]:
+                draw.text((1024 / 2 + i[0] - details_data[2] / 2, 357 + i[1]), details, font=montserrat, fill=(0, 0, 0, 100))
 
-        draw.text((1024 / 2 - details_data[2] / 2, 357), details, font=montserrat, fill=(250, 250, 250, 255))
+            draw.text((1024 / 2 - details_data[2] / 2, 357), details, font=montserrat, fill=(250, 250, 250, 255))
 
-        # Создаём текст прочей информации о погоде
-        other_data = opensans.getbbox(text=other_info)
+            # Создаём текст прочей информации о погоде
+            other_data = opensans.getbbox(text=other_info)
 
-        for i in [(2, 2), (-2, 2), (2, -2), (-2, -2)]:
-            draw.text((1024 / 2 + i[0] - other_data[2] / 2, 435 + i[1]), other_info, font=opensans, fill=(0, 0, 0, 100))
+            for i in [(2, 2), (-2, 2), (2, -2), (-2, -2)]:
+                draw.text((1024 / 2 + i[0] - other_data[2] / 2, 435 + i[1]), other_info, font=opensans, fill=(0, 0, 0, 100))
 
-        draw.text((1024 / 2 - other_data[2] / 2, 435), other_info, font=opensans, fill=(246, 245, 245, 255))
+            draw.text((1024 / 2 - other_data[2] / 2, 435), other_info, font=opensans, fill=(246, 245, 245, 255))
+        else:
+            for i in [(2, 2), (-2, 2), (2, -2), (-2, -2)]:
+                draw.text((512 / 2 + i[0] - temp_data[2] / 2, 108 + i[1]), text_temperature, font=poppins,
+                          fill=(0, 0, 0, 100))
+
+            draw.text((512 / 2 - temp_data[2] / 2, 108), text_temperature, font=poppins, fill=(255, 255, 255, 255))
+
+            # Создаём текст деталей погоды
+            details_data = montserrat.getbbox(text=details)
+
+            for i in [(2, 2), (-2, 2), (2, -2), (-2, -2)]:
+                draw.text((512 / 2 + i[0] - details_data[2] / 2, 178 + i[1]), details, font=montserrat,
+                          fill=(0, 0, 0, 100))
+
+            draw.text((512 / 2 - details_data[2] / 2, 178), details, font=montserrat, fill=(250, 250, 250, 255))
+
+            # Создаём текст прочей информации о погоде
+            other_data = opensans.getbbox(text=other_info)
+
+            for i in [(2, 2), (-2, 2), (2, -2), (-2, -2)]:
+                draw.text((512 / 2 + i[0] - other_data[2] / 2, 217 + i[1]), other_info, font=opensans,
+                          fill=(0, 0, 0, 100))
+
+            draw.text((512 / 2 - other_data[2] / 2, 217), other_info, font=opensans, fill=(246, 245, 245, 255))
 
         return source
