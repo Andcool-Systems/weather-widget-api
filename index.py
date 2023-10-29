@@ -6,6 +6,7 @@ from pyowm import OWM
 from pyowm.utils.config import get_default_config
 from pytz.exceptions import UnknownTimeZoneError
 from themes.default.default import DefaultTheme
+from themes.pixel_city.city import PixelCityTheme
 
 
 def handler(event, context):
@@ -23,6 +24,7 @@ def handler(event, context):
 
     timezone = "GMT0" if 'timezone' not in parameters else parameters['timezone']
     language = 'ru' if 'language' not in parameters else parameters['language']
+    theme = 'default' if 'theme' not in parameters else parameters['theme']
 
     try:
         # Устанавливаем язык
@@ -37,7 +39,22 @@ def handler(event, context):
         weather = observation.weather
 
         # Создаём объект темы
-        theme = DefaultTheme(weather, language, timezone)
+        match theme:
+            case 'default':
+                theme = DefaultTheme(weather, language, timezone)
+            case 'pixel-city':
+                theme = PixelCityTheme(weather, language)
+            case _:
+                return {
+                    "statusCode": 400,
+                    "body": {
+                        "status": "error",
+                        "code": "theme_not_found",
+                        "message": f"Theme '{language}' not found."
+                                   f"Check out the available themes on the repository page on GitHub: "
+                                   f"https://github.com/Andcool-Systems/weather-widget-api"
+                    }
+                }
 
         if language not in theme.supported_language:
             return {
@@ -45,7 +62,7 @@ def handler(event, context):
                 "body": {
                     "status": "error",
                     "code": "lang_not_found",
-                    "message": f"Language '{language}' not found. Use `ru` or `en`"
+                    "message": f"Language '{language}' not found. Use {', '.join(theme.supported_language)}"
                 }
             }
 
