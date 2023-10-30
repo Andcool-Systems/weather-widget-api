@@ -28,7 +28,7 @@ API расположен на GET https://weather.wavycat.ru/api
 | HTTP код | Возвращаемый code | Описание                                                 | Решение ошибки                                                                                                           |
 |----------|-------------------|----------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------|
 | 404      | place_not_found   | Переданный населённый пункт не найден.                   | Передать корректное место.                                                                                               |
-| 400      | lang_not_found    | Переданный язык не найден.                               | Передать язык, который поддерживает [тема]((https://github.com/Andcool-Systems/weather-widget-api#темы))                 |
+| 400      | lang_not_found    | Переданный язык не найден.                               | Передать язык, который поддерживает [тема](https://github.com/Andcool-Systems/weather-widget-api#темы)                   |
 | 400      | tz_not_found      | Переданный Timezone не найден (только в теме default).   | Передать корректный [код временной зоны](https://github.com/Andcool-Systems/weather-widget-api#параметры-тем)            |
 | 400      | theme_not_found   | Переданная тема не найдена.                              | Указать [существующую тему](https://github.com/Andcool-Systems/weather-widget-api#темы)                                  |
 | 500      | internal_error    | Внутренняя ошибка (может возникнуть по разным причинам). | Решения нету. Можете создать [Issue](https://github.com/Andcool-Systems/weather-widget-api/issues) с описанием проблемы. |
