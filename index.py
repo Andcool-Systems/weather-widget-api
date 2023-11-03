@@ -1,13 +1,14 @@
-import json
-import uuid
-
-from themes.default.default import DefaultTheme
-import base64
+from uuid import uuid4
+from json import dumps as json_encode
+from base64 import b64encode
 from io import BytesIO
-import pyowm
+from pyowm import OWM
 from pyowm.utils.config import get_default_config
-from pyowm.utils.config import get_default_config
-import pytz
+from pyowm.commons.exceptions import NotFoundError
+from pytz.exceptions import UnknownTimeZoneError
+from themes.default.default import DefaultTheme
+from themes.pixel_city.city import PixelCityTheme
+from traceback import print_exception
 
 
 def handler(event, context):
@@ -15,32 +16,48 @@ def handler(event, context):
     if 'place' not in parameters:
         return {"statusCode": 400, "body": {"status": "error", "message": "`place` query parameter not found"}}
 
-    if parameters['place'] == 'nightcity':
-        # Если ты нашёл эту фичу - молодец. Теперь ты знаешь что такое nightcity на самом деле.
-        location = 'perm'
-        location = 'perm'
-    elif parameters['place'] == 'andcool':
-        location = 'pskov'
-        location = 'pskov'
-    else:
-        location = parameters["place"]
-        location = parameters["place"]
+    match parameters['place']:
+        case 'nightcity':
+            location = 'perm'  # Easter egg
+        case 'andcool':
+            location = 'pskov'
+        case _:
+            location = parameters['place']
 
     timezone = "GMT0" if 'timezone' not in parameters else parameters['timezone']
     language = 'ru' if 'language' not in parameters else parameters['language']
+    theme = 'default' if 'theme' not in parameters else parameters['theme']
+    theme_size = 'small' if 'size' not in parameters else parameters['size']
+
     try:
         # Устанавливаем язык
         config_dict = get_default_config()
         config_dict['language'] = language
 
         # Создаём всякую фигню и объект погоды
-        owm = pyowm.OWM('61d202e168925f843260a7f646f65118', config_dict)
+        owm = OWM('61d202e168925f843260a7f646f65118', config_dict)
         mgr = owm.weather_manager()
 
         observation = mgr.weather_at_place(location)
         weather = observation.weather
+
         # Создаём объект темы
-        theme = DefaultTheme(weather, language, timezone)
+        match theme:
+            case 'default':
+                theme = DefaultTheme(weather, language, timezone)
+            case 'pixel-city':
+                theme = PixelCityTheme(weather, language, theme_size)
+            case _:
+                return {
+                    "statusCode": 400,
+                    "body": {
+                        "status": "error",
+                        "code": "theme_not_found",
+                        "message": f"Theme '{language}' not found."
+                                   f"Check out the available themes on the repository page on GitHub: "
+                                   f"https://github.com/Andcool-Systems/weather-widget-api"
+                    }
+                }
 
         if language not in theme.supported_language:
             return {
@@ -48,12 +65,21 @@ def handler(event, context):
                 "body": {
                     "status": "error",
                     "code": "lang_not_found",
-                    "message": f"Language '{language}' not found. Use `ru` or `en`"
+                    "message": f"Language '{language}' not found. Use {', '.join(theme.supported_language)}"
                 }
             }
-        image = theme.image()
 
-    except pytz.exceptions.UnknownTimeZoneError:
+        image = theme.image()
+    except NotFoundError:
+        return {
+            "statusCode": 400,
+            "body": {
+                "status": "error",
+                "code": "place_not_found",
+                "message": f"Place '{location}' not found."
+            }
+        }
+    except UnknownTimeZoneError:
         return {
             "statusCode": 400,
             "body": {
@@ -63,8 +89,9 @@ def handler(event, context):
             }
         }
     except Exception as e:
-        uid = str(uuid.uuid4())
-        print(json.dumps({'message': {'uuid': uid, 'msg': str(e)}, 'level': 'ERROR'}))
+        code = str(uuid4())
+        print(json_encode({'message': {'uuid': code, 'msg': str(e)}, 'level': 'ERROR'}))
+        print_exception(e)
 
         return {
             "statusCode": 500,
@@ -72,7 +99,7 @@ def handler(event, context):
                 "status": "error",
                 "code": "internal_error",
                 "message": "internal server error",
-                "error_uuid": uid
+                "error_uuid": code
             }
         }
 
@@ -84,7 +111,7 @@ def handler(event, context):
     image_bytes = image_bytes.getvalue()
 
     # Кодируем байты изображения в base64
-    encoded_image = base64.b64encode(image_bytes).decode('utf-8')
+    encoded_image = b64encode(image_bytes).decode('utf-8')
 
     # Формируем ответ в виде словаря
     response = {
@@ -97,4 +124,5 @@ def handler(event, context):
         "body": encoded_image,
         "isBase64Encoded": True
     }
+
     return response

@@ -1,14 +1,10 @@
-import json
-#from themes.base import BaseTheme
+from json import load as json_encode_file
 from PIL import Image, ImageFont, ImageDraw
-#from pyowm.weatherapi25.weather import Weather
 from datetime import datetime
-import pytz
-import requests
-from io import BytesIO
+from pytz import timezone as pytz_tz
 
 
-class DefaultTheme():
+class DefaultTheme:
     def __init__(self, weather_object, language: str, timezone):
         self.timezone = timezone
         self.supported_language = ['ru', 'en']
@@ -16,10 +12,9 @@ class DefaultTheme():
         self.language = language
 
     def image(self) -> Image:
-        
         # Load language from config
         with open('themes/default/lang.json', 'r', encoding='utf-8') as file:
-            lang = json.load(file)
+            lang = json_encode_file(file)
 
         # Load fonts and image
         fnt_big = ImageFont.truetype("themes/default/manrope-bold.ttf", 25)
@@ -29,7 +24,6 @@ class DefaultTheme():
         fnt_very_small = ImageFont.truetype("themes/default/manrope-bold.ttf", 7)
         windArrow = Image.open("themes/default/wind.png")
 
-        
         # Adaptive timezone
         timezoneList = list(self.timezone)
         timezoneListPreview = timezoneList.copy()
@@ -40,8 +34,8 @@ class DefaultTheme():
             timezoneListPreview.insert(3, "+")
         newTimezone = "".join(timezoneList)
         newTimezonePreview = "".join(timezoneListPreview)
-        
-        nowTime = datetime.now(pytz.timezone(f"Etc/{newTimezone}"))
+
+        nowTime = datetime.now(pytz_tz(f"Etc/{newTimezone}"))
 
         # Get weather data
         tempDict = self.weather.temperature('celsius')
@@ -61,15 +55,15 @@ class DefaultTheme():
         timeFormatted = f"{lang['at_the_moment'][self.language]} {nowTime.hour}:{nowTime.minute if nowTime.minute > 9 else '0' + str(nowTime.minute)} UTC{newTimezonePreview[-2:]}"
 
         # Get icon
-        response = requests.get(self.weather.weather_icon_url(size='2x'))
-        weatherIcon = Image.open(BytesIO(response.content)).resize((90, 90))
+        icon_name = self.weather.weather_icon_url(size='2x').split('/')[-1]
+        weatherIcon = Image.open(f'themes/default/icons/{icon_name}').resize((90, 90))
 
         # Specify dimensions
         width, height = 345, 145
 
         # Load image
         mainImage = Image.open("themes/default/background.png")
-        mainImage.paste(weatherIcon, (0, height // 2 - 90 // 2), weatherIcon) # Paste weather icon to canvas
+        mainImage.paste(weatherIcon, (0, height // 2 - 90 // 2), weatherIcon)  # Paste weather icon to canvas
         line = Image.open("themes/default/line.png")
         draw = ImageDraw.Draw(mainImage)
 
@@ -91,7 +85,7 @@ class DefaultTheme():
 
         mainImage.paste(line, (max(tempWidth, feelsLikeWidth) + 85 + 15, height // 2 - 128 // 2), line)
 
-        offset = max(tempWidth, feelsLikeWidth) + 85 + 15 + 2 # calculate vertical line offset
+        offset = max(tempWidth, feelsLikeWidth) + 85 + 15 + 2  # calculate vertical line offset
 
         # Rotate and paste wind arrow
         arrowRotated = windArrow.rotate(180 - windDirection, resample=Image.BILINEAR)
@@ -99,30 +93,31 @@ class DefaultTheme():
 
         # Create and paste some weather information
         # Paste wind speed text
-        draw.text((offset + 30, 16), 
-                  f"{round(windSpeed, 1)}m/s {windStr}", 
-                  font=fnt_small, 
+        draw.text((offset + 30, 16),
+                  f"{round(windSpeed, 1)}m/s {windStr}",
+                  font=fnt_small,
                   fill=(255, 255, 255, 255))
-        
+
         # Paste pressure information
-        draw.text((offset + 10, 35), 
-                  f"{round(pressure / 1.333, 1)} {lang['pressure'][self.language]}", 
+        draw.text((offset + 10, 35),
+                  f"{round(pressure / 1.333, 1)} {lang['pressure'][self.language]}",
                   font=fnt_small,
                   fill=(255, 255, 255, 255))
-        
+
         # Paste humidity information
-        draw.text((offset + 10, 55), 
-                  f"{lang['humidity'][self.language]}: {humidity}%", 
+        draw.text((offset + 10, 55),
+                  f"{lang['humidity'][self.language]}: {humidity}%",
                   font=fnt_small,
                   fill=(255, 255, 255, 255))
-        
+
         # Paste visibility information
         draw.text((offset + 10, 75),
                   f"{lang['visibility'][self.language]}: {round(visibilityDistance / 1000, 1)}{lang['visibility_range'][self.language]}",
                   font=fnt_small, fill=(255, 255, 255, 255))
-        draw.text((7, height - 13), "by AndcoolSystems", font=fnt_very_small, fill=(180, 180, 180, 255)) # Draw created by line
+        draw.text((7, height - 13), "by AndcoolSystems", font=fnt_very_small,
+                  fill=(180, 180, 180, 255))  # Draw created by line
 
-        detailedStatusText = detailedStatus.capitalize() #Capialize detailed weather status
+        detailedStatusText = detailedStatus.capitalize()  # Capialize detailed weather status
         sizeCounter = 15
         detailedStatusFont = ImageFont.truetype("themes/default/manrope-bold.ttf", sizeCounter)
 
