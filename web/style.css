@@ -5,13 +5,6 @@
     white-space: nowrap;
 }
 
-footer{
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    display: grid;
-    justify-items: start;
-}
 #link{
     min-height:100%;
 }
@@ -76,6 +69,7 @@ button {
     margin-left: 2%;
     cursor: pointer;
     white-space: nowrap;
+    margin-bottom: 5%;
 }
 
 #main{
@@ -93,10 +87,36 @@ button {
 
 #weatherImage{
     margin-bottom: 1%;
+    max-width: 90%;
 }
 #url{
     padding: 1%;
 
+}
+
+h3{
+    margin: 0%;
+    margin-bottom: 1%;
+}
+
+.container{
+    border: 1px solid #333;
+    width: 16%;
+    border-radius: 10px;
+    margin-bottom: 1%;
+    padding: 1%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.inContainer{
+    width: 80%;
+    padding: 3%;
+    margin-bottom: 2%;
+}
+#container_theme_city{
+    display: none;
 }
 
 /* The snackbar - position it at the bottom and in the middle of the screen */
@@ -189,5 +209,8 @@ button {
     }
     #url{
         padding: 4%;
+    }
+    .container{
+        width: 80%;
     }
 }
