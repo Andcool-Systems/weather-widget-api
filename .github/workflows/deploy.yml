@@ -14,12 +14,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Upload files to Object Storage
+        id: s3-upload
+        uses: yc-actions/yc-obj-storage-upload@v1
+        with:
+          yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
+          bucket: ${{ secrets.BUCKET_CODE }}
+          root: ./
+          include: |
+            ./themes
+            index.py
+            requirements.txt
+
       - name: Deploy Function
         id: sls-func
         uses: yc-actions/yc-sls-function@v2
         with:
           yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
           folder-id: ${{ secrets.FOLDER_ID }}
+          bucket: ${{ secrets.BUCKET_CODE }}
           function-name: 'weather'
           runtime: 'python311'
           memory: '256Mb'
@@ -27,7 +40,3 @@ jobs:
           logs-group-id: ${{ secrets.LOG_GROUP_ID }}
           environment: | 
             OWM_TOKEN=61d202e168925f843260a7f646f65118
-          include: |
-            ./themes
-            index.py
-            requirements.txt
