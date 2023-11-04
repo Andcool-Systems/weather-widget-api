@@ -14,18 +14,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Upload files to Object Storage
-        id: s3-upload
-        uses: yc-actions/yc-obj-storage-upload@v1
-        with:
-          yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
-          bucket: ${{ secrets.BUCKET_CODE }}
-          root: ./
-          include: |
-            ./themes
-            index.py
-            requirements.txt
-
       - name: Deploy Function
         id: sls-func
         uses: yc-actions/yc-sls-function@v2

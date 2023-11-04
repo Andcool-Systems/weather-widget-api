@@ -2,7 +2,7 @@
 
 ![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/Andcool-Systems/weather-widget-api/deploy.yml?style=for-the-badge&logo=yandexcloud&logoColor=white&label=Deploy&labelColor=1A222E&color=242B36)
 
-Виджет погоды, например, для вашего профиля GitHub. 
+Виджет погоды, например, для вашего профиля GitHub.
 
 ## Параметры API
 
