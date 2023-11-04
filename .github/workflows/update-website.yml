@@ -1,0 +1,26 @@
+name: Update website
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'web/*'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Upload files to Object Storage
+        id: s3-upload
+        uses: yc-actions/yc-obj-storage-upload@v1
+        with:
+          yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
+          bucket: ${{ secrets.BUCKET }}
+          root: ./web
+          include: |
+            *.html
+            *.css

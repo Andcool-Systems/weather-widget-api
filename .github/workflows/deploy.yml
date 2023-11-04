@@ -3,6 +3,8 @@ name: Deploy to cloud
 on:
   push:
     branches: [ "main" ]
+    paths-ignore:
+      - 'web/*'
 
 jobs:
   deploy:
