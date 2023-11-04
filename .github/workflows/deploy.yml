@@ -1,4 +1,4 @@
-name: Deploy to Cloud
+name: Deploy to cloud
 
 on:
   push:
@@ -12,28 +12,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Create Zip Archive
-        run: zip -r code.zip .
-        working-directory: ${{ github.workspace }}
-
-      - name: Install CLI
-        run: curl https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash -s -- -i /opt/yc -n
-
-      - name: Create key.json file
-        run: echo "${{ secrets.KEY }}" | base64 --decode > key.json
-        working-directory: ${{ github.workspace }}
-
-      - name: Create new profile in CLI
-        run: /opt/yc/bin/yc config profile create func-auth
-
-      - name: Add authorised key
-        run: /opt/yc/bin/yc config set service-account-key $GITHUB_WORKSPACE/key.json
-
-      - name: Specify the cloud identifier
-        run: /opt/yc/bin/yc config set cloud-id ${{ secrets.CLOUD_ID }}
-
-      - name: Specify the folder identifier
-        run: /opt/yc/bin/yc config set folder-id ${{ secrets.FOLDER_ID }}
-
-      - name: Create new version of function
-        run: /opt/yc/bin/yc serverless function version create --function-id ${{ secrets.FUNCTION_ID }} --runtime python311 --entrypoint index.handler --execution-timeout 5s --source-path $GITHUB_WORKSPACE/code.zip --log-folder-name default
+      - name: Deploy Function
+        id: sls-func
+        uses: yc-actions/yc-sls-function@v2
+        with:
+          yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
+          folder-id: ${{ secrets.FOLDER_ID }}
+          function-name: 'weather'
+          runtime: 'python311'
+          memory: '256Mb'
+          entrypoint: 'index.handler'
+          logs-group-id: ${{ secrets.LOG_GROUP_ID }}
+          environment: | 
+            OWM_TOKEN=61d202e168925f843260a7f646f65118
+          include: |
+            ./themes
+            index.py
+            requirements.txt
+          tags: |
+            ${{ GITHUB_SHA::6 }}
+            latest

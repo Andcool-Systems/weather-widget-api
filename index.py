@@ -2,6 +2,7 @@ from uuid import uuid4
 from json import dumps as json_encode
 from base64 import b64encode
 from io import BytesIO
+from os import environ
 from pyowm import OWM
 from pyowm.utils.config import get_default_config
 from pyowm.commons.exceptions import NotFoundError
@@ -35,7 +36,7 @@ def handler(event, context):
         config_dict['language'] = language
 
         # Создаём всякую фигню и объект погоды
-        owm = OWM('61d202e168925f843260a7f646f65118', config_dict)
+        owm = OWM(environ['OWM_TOKEN'], config_dict)
         mgr = owm.weather_manager()
 
         observation = mgr.weather_at_place(location)
