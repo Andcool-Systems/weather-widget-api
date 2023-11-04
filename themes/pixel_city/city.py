@@ -3,22 +3,13 @@ from PIL import Image, ImageFont, ImageDraw
 
 class PixelCityTheme:
     def __init__(self, weather_object, language: str, theme_size: str):
-        self.supported_language = '*'
+        self.supported_language = ['ru', 'en', 'it', 'es', 'sp', 'ua', 'uk', 'de', 'pt', 'ro', 'pl', 'fi', 'nl', 'fr',
+                                   'bg', 'sv', 'se', 'zh_tw', 'zh', 'zh_cn', 'tr', 'hr', 'ca']
         self.theme_size = theme_size
         self.weather = weather_object
         self.language = language
 
     def image(self) -> Image:
-        # Импортируем все необходимое
-        if self.theme_size == 'big':
-            poppins = ImageFont.truetype("themes/pixel_city/Poppins-SemiBold.ttf", 128)
-            montserrat = ImageFont.truetype("themes/pixel_city/Montserrat-Medium.ttf", 64)
-            opensans = ImageFont.truetype("themes/pixel_city/OpenSans-SemiBold.ttf", 48)
-        else:
-            poppins = ImageFont.truetype("themes/pixel_city/Poppins-SemiBold.ttf", 64)
-            montserrat = ImageFont.truetype("themes/pixel_city/Montserrat-Medium.ttf", 32)
-            opensans = ImageFont.truetype("themes/pixel_city/OpenSans-SemiBold.ttf", 24)
-
         # Получаем данные о погоде
         temperature_info = self.weather.temperature('celsius')
         temperature, temperature_fl = round(temperature_info['temp']), round(temperature_info['feels_like'])
@@ -68,9 +59,49 @@ class PixelCityTheme:
         text_temperature = f'{temperature}°C'
 
         match self.language:
-            case 'ru':
+            case 'ru' | 'ua' | 'uk':
+                if self.theme_size == 'big':
+                    poppins = ImageFont.truetype("themes/pixel_city/Poppins-SemiBold.ttf", 128)
+                    montserrat = ImageFont.truetype("themes/pixel_city/Montserrat-Medium.ttf", 64)
+                    opensans = ImageFont.truetype("themes/pixel_city/OpenSans-SemiBold.ttf", 48)
+                else:
+                    poppins = ImageFont.truetype("themes/pixel_city/Poppins-SemiBold.ttf", 64)
+                    montserrat = ImageFont.truetype("themes/pixel_city/Montserrat-Medium.ttf", 32)
+                    opensans = ImageFont.truetype("themes/pixel_city/OpenSans-SemiBold.ttf", 24)
+
                 other_info = f'fl: {temperature_fl}°C / H: {humidity}% / V: {visibility_distance} км'
+            case 'zh_tw':
+                if self.theme_size == 'big':
+                    poppins = ImageFont.truetype("themes/pixel_city/Poppins-SemiBold.ttf", 128)
+                    montserrat = ImageFont.truetype('themes/pixel_city/NotoSansTC-Medium.ttf', 64)
+                    opensans = ImageFont.truetype("themes/pixel_city/NotoSansTC-SemiBold.ttf", 48)
+                else:
+                    poppins = ImageFont.truetype("themes/pixel_city/Poppins-SemiBold.ttf", 64)
+                    montserrat = ImageFont.truetype('themes/pixel_city/NotoSansTC-Medium.ttf', 32)
+                    opensans = ImageFont.truetype("themes/pixel_city/NotoSansTC-SemiBold.ttf", 24)
+
+                other_info = f'感覺像: {temperature_fl}°C / 濕度: {humidity}% / 能見度: {visibility_distance} 公里'
+            case 'zh' | 'zh_cn':
+                if self.theme_size == 'big':
+                    poppins = ImageFont.truetype("themes/pixel_city/Poppins-SemiBold.ttf", 128)
+                    montserrat = ImageFont.truetype('themes/pixel_city/NotoSansSC-Medium.ttf', 64)
+                    opensans = ImageFont.truetype("themes/pixel_city/NotoSansSC-SemiBold.ttf", 48)
+                else:
+                    poppins = ImageFont.truetype("themes/pixel_city/Poppins-SemiBold.ttf", 64)
+                    montserrat = ImageFont.truetype('themes/pixel_city/NotoSansSC-Medium.ttf', 32)
+                    opensans = ImageFont.truetype("themes/pixel_city/NotoSansSC-SemiBold.ttf", 24)
+
+                other_info = f'感觉像: {temperature_fl}°C / 湿度: {humidity}% / 能见度: {visibility_distance} 公里'
             case _:
+                if self.theme_size == 'big':
+                    poppins = ImageFont.truetype("themes/pixel_city/Poppins-SemiBold.ttf", 128)
+                    montserrat = ImageFont.truetype("themes/pixel_city/Montserrat-Medium.ttf", 64)
+                    opensans = ImageFont.truetype("themes/pixel_city/OpenSans-SemiBold.ttf", 48)
+                else:
+                    poppins = ImageFont.truetype("themes/pixel_city/Poppins-SemiBold.ttf", 64)
+                    montserrat = ImageFont.truetype("themes/pixel_city/Montserrat-Medium.ttf", 32)
+                    opensans = ImageFont.truetype("themes/pixel_city/OpenSans-SemiBold.ttf", 24)
+
                 other_info = f'fl: {temperature_fl}°C / H: {humidity}% / V: {visibility_distance} km'
 
         # Рисуем
