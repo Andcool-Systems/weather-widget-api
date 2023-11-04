@@ -1,13 +1,17 @@
 # Weather Widget
-
 ![GitHub Workflow Status (API)](https://img.shields.io/github/actions/workflow/status/Andcool-Systems/weather-widget-api/deploy.yml?style=for-the-badge&logo=yandexcloud&logoColor=white&label=API%20Deploy&labelColor=1A222E&color=242B36&cacheSeconds=10)
 ![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/Andcool-Systems/weather-widget-api/update-website.yml?style=for-the-badge&logo=yandexcloud&logoColor=white&label=Website%20Deploy&labelColor=1A222E&color=242B36&cacheSeconds=10)
 
 Виджет погоды, например, для вашего профиля GitHub.
 
-## Параметры API
+## Архитектура
+Проект имеет Serverless архитектуру типа AWS Lambda.
+Разрабатывалось под Cloud Functions в Yandex.Cloud.
+Директория `web` никак не связана с остальным кодом, она загружается в объектное хранилище и связывается через API Gateway.
+> По какой-то причине шлюз облачных функций не умеет корректно обрабатывать картинки, поэтому генерация работает только через API Gateway. Возможно это исправимая проблема.
 
-> Можете воспользоваться генератором: https://weather.wavycat.ru или https://weather.andcool.ru
+## Параметры API
+> Можете воспользоваться генератором, расположенном на https://weather.wavycat.ru или https://weather.andcool.ru
 
 API расположен на GET https://weather.wavycat.ru/api
 
@@ -18,7 +22,6 @@ API расположен на GET https://weather.wavycat.ru/api
 | theme    | Используемая тема виджета                    | default      | default, pixel-city | Нет          |
 
 ### Параметры тем
-
 Некоторые темы могут иметь свои обязательные или необязательные параметры.
 
 | Название | В теме     | Описание                                                    | По умолчанию | Возможные значения              | Обязательный |
