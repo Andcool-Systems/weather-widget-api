@@ -3,7 +3,7 @@ from PIL import Image, ImageFont, ImageDraw
 
 class PixelCityTheme:
     def __init__(self, weather_object, language: str, theme_size: str):
-        self.supported_language = ['ru', 'en']  # TODO: add jp
+        self.supported_language = '*'
         self.theme_size = theme_size
         self.weather = weather_object
         self.language = language
@@ -68,10 +68,10 @@ class PixelCityTheme:
         text_temperature = f'{temperature}°C'
 
         match self.language:
-            case 'en':
-                other_info = f'fl: {temperature_fl}°C / H: {humidity}% / V: {visibility_distance} km'
             case 'ru':
                 other_info = f'fl: {temperature_fl}°C / H: {humidity}% / V: {visibility_distance} км'
+            case _:
+                other_info = f'fl: {temperature_fl}°C / H: {humidity}% / V: {visibility_distance} km'
 
         # Рисуем
         # Создаём текст температуры

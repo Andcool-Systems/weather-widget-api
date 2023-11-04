@@ -60,7 +60,7 @@ def handler(event, context):
                     }
                 }
 
-        if language not in theme.supported_language:
+        if theme.supported_language != '*' and language not in theme.supported_language:
             return {
                 "statusCode": 400,
                 "body": {
