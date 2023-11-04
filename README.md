@@ -13,7 +13,7 @@
 ## Параметры API
 > Можете воспользоваться генератором, расположенном на [weather.wavycat.ru](https://weather.wavycat.ru) или [weather.andcool.ru](https://weather.andcool.ru)
 
-API расположен на GET https://weather.wavycat.ru/api
+API расположен на GET https://weather.wavycat.ru/api или https://weather.andcool.ru/api
 
 | Название | Описание                                     | По умолчанию | Возможные значения  | Обязательный |
 |----------|----------------------------------------------|--------------|---------------------|--------------|
