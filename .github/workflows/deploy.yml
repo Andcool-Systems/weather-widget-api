@@ -31,6 +31,3 @@ jobs:
             ./themes
             index.py
             requirements.txt
-          tags: |
-            ${{ GITHUB_SHA::6 }}
-            latest
