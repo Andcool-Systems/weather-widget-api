@@ -69,9 +69,9 @@ class PixelCityTheme:
 
         match self.language:
             case 'en':
-                other_info = f'fl: {temperature_fl}°C / H: {humidity}% | V: {visibility_distance} km'
+                other_info = f'fl: {temperature_fl}°C / H: {humidity}% / V: {visibility_distance} km'
             case 'ru':
-                other_info = f'fl: {temperature_fl}°C / H: {humidity}% | V: {visibility_distance} км'
+                other_info = f'fl: {temperature_fl}°C / H: {humidity}% / V: {visibility_distance} км'
 
         # Рисуем
         # Создаём текст температуры

@@ -58,6 +58,19 @@
             <option value="en">Английский</option>
         </select>
 
+        <div class="container">
+            <h3>Тема:</h3>
+            <select id="container_theme" name="theme" class="inContainer" onchange="updateURL()">
+                <option value="stand">Стандартная</option>
+                <option value="pixel-city">Пиксельный город</option>
+            </select>
+
+            <select id="container_theme_city" name="theme_city" class="inContainer" onchange="updateURL()">
+                <option value="small">Маленький (512x358)</option>
+                <option value="big">Большой (1024x716)</option>
+            </select>
+        </div>
+
 
         <img id="weatherImage" src="https://weather.wavycat.ru/api?place=moscow" alt="Ошибка генерации">
 
@@ -68,12 +81,6 @@
             <button onclick="copyURL()">Скопировать</button>
             <button onclick="copyShortURL()">Короткий URL</button>
         </div>
-        <footer>
-            <p class="footer_text">Оригинальный <a href="https://github.com/Andcool-Systems/weather-widget-api" target="_blank" id="github_link">
-                репозиторий на GitHub
-            </a></p>
-            <p class="footer_text" id="down">Created by WavyCat and AndcoolSystems</p>
-        </footer>
     </div>
     <script>
         async function load(){
@@ -108,22 +115,36 @@
         }
         
         function updateURL() {
+
             var cityName = document.getElementById("city").value;
-            var timezone = document.getElementById("timezone").value;
+            var timezoneSelect = document.getElementById("timezone").value;
             var lang = document.getElementById("language").value;
+            var theme = document.getElementById("container_theme").value;
+            var themeSizeSelect = document.getElementById("container_theme_city").value;
 
             if (cityName === "") {
                 cityName = "moscow";
             }
 
-            var city = "?place=" + cityName
-            var langTxt = "&language=" + lang
+            var city = "?place=" + cityName;
+            var langTxt = "&language=" + lang;
+            var themeSize = "";
+            var timezone = "";
 
-            if (timezone !== "") {
-                var timezone = "&timezone=" + timezone
+            if (timezoneSelect !== "") {
+                var timezone = "&timezone=" + timezoneSelect;
             }
-            document.getElementById("weatherImage").src = "https://weather.wavycat.ru/api" + city + timezone + langTxt;
-            document.getElementById("url").value = "https://weather.wavycat.ru/api" + city + timezone + langTxt;
+
+            if (theme === "pixel-city"){
+                document.getElementById("container_theme_city").style.display = "block";
+                themeSize = "&theme=pixel-city" + "&size=" + String(themeSizeSelect);
+                timezone = "";
+            }else{
+                document.getElementById("container_theme_city").style.display = "none";
+            }
+
+            document.getElementById("weatherImage").src = "https://weather.wavycat.ru/api" + city + timezone + langTxt + themeSize;
+            document.getElementById("url").value = "https://weather.wavycat.ru/api" + city + timezone + langTxt + themeSize;
             
         }
 
