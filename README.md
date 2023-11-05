@@ -1,6 +1,7 @@
 # Weather Widget
 ![GitHub Workflow Status (API)](https://img.shields.io/github/actions/workflow/status/Andcool-Systems/weather-widget-api/deploy.yml?style=for-the-badge&logo=yandexcloud&logoColor=white&label=API%20Deploy&labelColor=1A222E&color=242B36&cacheSeconds=10)
 ![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/Andcool-Systems/weather-widget-api/update-website.yml?style=for-the-badge&logo=yandexcloud&logoColor=white&label=Website%20Deploy&labelColor=1A222E&color=242B36&cacheSeconds=10)
+![GitHub repo size](https://img.shields.io/github/repo-size/Andcool-Systems/weather-widget-api?style=for-the-badge&logo=github&logoColor=white&labelColor=1A222E&color=242B36&cacheSeconds=5)
 
 Виджет погоды, например, для вашего профиля GitHub.
 
@@ -13,7 +14,7 @@
 ## Параметры API
 > Можете воспользоваться генератором, расположенном на [weather.wavycat.ru](https://weather.wavycat.ru) или [weather.andcool.ru](https://weather.andcool.ru)
 
-API расположен на GET https://weather.wavycat.ru/api или https://weather.andcool.ru/api
+API расположен на **GET** https://weather.wavycat.ru/api или https://weather.andcool.ru/api
 
 | Название | Описание                                     | По умолчанию | Возможные значения  | Обязательный |
 |----------|----------------------------------------------|--------------|---------------------|--------------|
