@@ -45,7 +45,7 @@ class PixelCityTheme:
                 background_name = 'thunderstorm'
             case '13d.png' | '13n.png':
                 background_name = 'snow'
-            case '50n.png':
+            case '50n.png' | '50d.png':
                 background_name = 'mist'
 
         if self.theme_size == 'big':
