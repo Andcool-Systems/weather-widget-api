@@ -27,4 +27,4 @@ jobs:
           entrypoint: 'index.handler'
           logs-group-id: ${{ secrets.LOG_GROUP_ID }}
           environment: | 
-            OWM_TOKEN=61d202e168925f843260a7f646f65118
+            OWM_TOKEN=${{ secrets.OWM_TOKEN }}
