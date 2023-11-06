@@ -5,6 +5,8 @@ on:
     branches: [ "main" ]
     paths-ignore:
       - 'web/*'
+      - 'README.MD'
+      - '.gitignore'
 
 jobs:
   deploy:
