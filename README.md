@@ -24,7 +24,7 @@ API расположен на **GET** https://weather.wavycat.ru/api и https://
 | theme    | Используемая тема виджета                     | default      | default, pixel-city | Нет          |
 
 Некоторые темы могут иметь свои обязательные или необязательные параметры.
-Подробнее о них можно узнать в разделе "Темы".
+Подробнее о них можно узнать в разделе [Темы](https://github.com/Andcool-Systems/weather-widget-api#темы).
 
 ### Ограничение запросов
 По умолчанию, API шлюз weather.wavycat.ru и weather.andcool.ru ограничивает все запросы до указанных ниже значений.
