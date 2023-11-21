@@ -90,7 +90,7 @@ def handler(event, context):
             }
         }
     except Exception as e:
-        code = str(uuid4())
+        code = str(uuid4())  # Some code
         print(json_encode({'message': {'uuid': code, 'msg': str(e)}, 'level': 'ERROR'}))
         print_exception(e)
 
