@@ -70,7 +70,8 @@ class PixelCityTheme:
 
         background_name = icon_to_background.get(icon_name, "day")
 
-        source = Image.open(f'themes/pixel_city/backgrounds/{self.theme_size}/{background_name}.png')
+        source = Image.open(f'themes/pixel_city/backgrounds/{background_name}.png')
+        source = source.resize((512, 358)) if self.theme_size == 'small' else source
         draw = ImageDraw.Draw(source)
 
         # Создаём текста
