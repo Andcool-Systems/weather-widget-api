@@ -54,6 +54,7 @@ class DefaultTheme:
         # Formatting time
         timeFormatted = f"{lang['at_the_moment'][self.language]} {nowTime.hour}:{nowTime.minute if nowTime.minute > 9 else '0' + str(nowTime.minute)} UTC{newTimezonePreview[-2:]}"
 
+        
         # Get icon
         icon_name = self.weather.weather_icon_url(size='2x').split('/')[-1]
         weatherIcon = Image.open(f'themes/default/icons/{icon_name}').resize((90, 90))

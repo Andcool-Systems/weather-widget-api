@@ -24,7 +24,7 @@ jobs:
           folder-id: ${{ secrets.FOLDER_ID }}
           bucket: ${{ secrets.BUCKET_CODE }}
           function-name: 'weather'
-          runtime: 'python311'
+          runtime: 'python312'
           memory: '256Mb'
           entrypoint: 'index.handler'
           logs-group-id: ${{ secrets.LOG_GROUP_ID }}
