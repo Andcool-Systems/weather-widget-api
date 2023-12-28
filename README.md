@@ -13,6 +13,7 @@
 
 ## Подробнее об API
 API расположен на **GET** https://weather.wavycat.ru/api и https://weather.andcool.ru/api (можете использовать любой из них)
+Все ответы, полученные с endpoint'а /api на домене weather.andcool.ru будут кэшироваться на 2 часа, вне зависимости от переданного cache-control хедера.
 
 > Для упрощения создания виджета, можете использовать конструктор на [сайте](https://weather.wavycat.ru) (либо [тут](https://weather.andcool.ru))
 
