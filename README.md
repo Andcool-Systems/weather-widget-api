@@ -65,7 +65,7 @@ API расположен на **GET** https://weather.wavycat.ru/api и https://
 | timezone | Часовой пояс | Нет          | `gmt0`        | gmt(число от -14 до 12) |
 
 #### Пример темы
-![default theme](https://weather.wavycat.ru/api?place=andcool&timezone=gmt3)
+![default theme](https://weather.andcool.ru/api?place=andcool&timezone=gmt3)
 
 
 ### pixel-city
@@ -99,5 +99,5 @@ API расположен на **GET** https://weather.wavycat.ru/api и https://
 | size     | Размер итогового изображения | Нет          | `small`      | `small` (512x358), `big` (1024x716) |
 
 #### Пример темы
-![default theme](https://weather.wavycat.ru/api?place=nightcity&theme=pixel-city&size=small)
+![default theme](https://weather.andcool.ru/api?place=nightcity&theme=pixel-city&size=small)
 
