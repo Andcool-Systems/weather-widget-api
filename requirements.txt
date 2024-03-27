@@ -1,3 +1,7 @@
 pillow==10.0.0
 pyowm==3.3.0
 pytz==2023.3
+fastapi
+uvicorn
+slowapi
+python-dotenv
