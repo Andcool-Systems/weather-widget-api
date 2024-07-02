@@ -1,0 +1,32 @@
+{
+    "pressure":{
+        "ru": "мм рт. ст.",
+        "en": "mm Hg"
+    },
+
+    "humidity": {
+        "ru": "Влажность",
+        "en": "Humidity"
+    },
+
+    "visibility": {
+        "ru": "Видимость",
+        "en": "Visibility"
+    },
+
+    "visibility_range": {
+        "ru": "км",
+        "en": "km"
+    },
+
+    "at_the_moment": {
+        "ru": "На момент",
+        "en": "At"
+    },
+
+    "wind_dir":{
+        "ru": ["С", "СВ", "В", "ЮВ", "Ю", "ЮЗ", "З", "СЗ", "С"],
+        "en": ["N", "NE", "E", "SE", "S", "SW", "W", "NW", "N"]
+    }
+
+}

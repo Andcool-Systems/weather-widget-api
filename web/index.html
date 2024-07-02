@@ -1,422 +1,283 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <title>Погода</title>
+        <meta charset="UTF-8">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@800&family=Manrope:wght@600&display=swap"
+            rel="stylesheet">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <html prefix="og: http://ogp.me/ns#">
+        <meta property="og:title" content="Weather Widget">
+        <meta property="og:site_name" content="weather.andcool.ru">
+        <meta property="og:url" content="https://weather.andcool.ru">
+        <meta property="og:description" content="Виджет погоды для вашего сайта или профиля GitHub">
 
-<head>
-    <title>Погода</title>
-    <meta charset="UTF-8">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@800&family=Manrope:wght@600&display=swap"
-        rel="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <html prefix="og: http://ogp.me/ns#">
-    <meta property="og:title" content="Weather Widget">
-    <meta property="og:site_name" content="weather.andcool.ru">
-    <meta property="og:url" content="https://weather.andcool.ru">
-    <meta property="og:description" content="Виджет погоды для вашего сайта или профиля GitHub">
+        </html>
+    </head>
 
-    </html>
-</head>
+    <body>
+        <div id="snackbar">Скопировано!</div>
+        <h3 class="title" style="margin-top: 30px">Weather Widget</h3>
+        <p class="description">Виджет погоды для вашего сайта или профиля GitHub (например, как <a id="github_link"
+                href="https://github.com/Andcool-Systems">тут</a>)</p>
 
-<body>
-    <div id="snackbar">Скопировано!</div>
-    <h3 class="title" style="margin-top: 30px">Weather Widget</h3>
-    <p class="description">Виджет погоды для вашего сайта или профиля GitHub (например, как <a id="github_link"
-            href="https://github.com/Andcool-Systems">тут</a>)</p>
+        <div id="main">
+            <h4 class="title">Генератор</h4>
 
-    <div id="main">
-        <h4 class="title">Генератор</h4>
+            <input type="text" id="city" name="city" placeholder="Название города" oninput="updateURL()">
 
-        <input type="text" id="city" name="city" placeholder="Название города" oninput="updateURL()">
-
-        <select id="timezone" name="timezone" onchange="updateURL()">
-            <option value="">По умолчанию (GMT+0)</option>
-            <option value="gmt1">GMT+1 (Лондон)</option>
-            <option value="gmt2">GMT+2 (Париж)</option>
-            <option value="gmt3">GMT+3 (Москва, Псков)</option>
-            <option value="gmt4">GMT+4</option>
-            <option value="gmt5">GMT+5 (Екатеринбург, Уфа)</option>
-            <option value="gmt6">GMT+6 (Дакка)</option>
-            <option value="gmt7">GMT+7 (Джакарта)</option>
-            <option value="gmt8">GMT+8 (Шанхай)</option>
-            <option value="gmt9">GMT+9 (Сеул, Токио)</option>
-            <option value="gmt10">GMT+10 (Сидней)</option>
-            <option value="gmt11">GMT+11</option>
-            <option value="gmt12">GMT+12</option>
-            <option value="gmt-3">GMT-3 (Сан-Паулу)</option>
-            <option value="gmt-4">GMT-4 (Нью-Йорк - Летнее)</option>
-            <option value="gmt-5">GMT-5</option>
-            <option value="gmt-6">GMT-6 (Мехико)</option>
-            <option value="gmt-7">GMT-7 (Лос-Анджелес - Летнее)</option>
-            <option value="gmt-8">GMT-8</option>
-            <option value="gmt-9">GMT-9</option>
-            <option value="gmt-10">GMT-10</option>
-            <option value="gmt-11">GMT-11</option>
-            <option value="gmt-12">GMT-12</option>
-            <option value="gmt-13">GMT-13</option>
-            <option value="gmt-14">GMT-14</option>
-        </select>
-
-        <select id="language" name="language" onchange="updateURL()">
-            <option value="ru">По умолчанию (Русский)</option>
-            <option value="en">Английский</option>
-        </select>
-
-        <div class="container">
-            <h3>Тема:</h3>
-            <select id="container_theme" name="theme" class="inContainer" onchange="updateURL()">
-                <option value="stand">Стандартная</option>
-                <option value="pixel-city">Пиксельный город</option>
+            <select id="timezone" name="timezone" onchange="updateURL()">
+                <option value="">По умолчанию (GMT+0)</option>
+                <option value="gmt1">GMT+1 (Лондон)</option>
+                <option value="gmt2">GMT+2 (Париж)</option>
+                <option value="gmt3">GMT+3 (Москва, Псков)</option>
+                <option value="gmt4">GMT+4</option>
+                <option value="gmt5">GMT+5 (Екатеринбург, Уфа)</option>
+                <option value="gmt6">GMT+6 (Дакка)</option>
+                <option value="gmt7">GMT+7 (Джакарта)</option>
+                <option value="gmt8">GMT+8 (Шанхай)</option>
+                <option value="gmt9">GMT+9 (Сеул, Токио)</option>
+                <option value="gmt10">GMT+10 (Сидней)</option>
+                <option value="gmt11">GMT+11</option>
+                <option value="gmt12">GMT+12</option>
+                <option value="gmt-3">GMT-3 (Сан-Паулу)</option>
+                <option value="gmt-4">GMT-4 (Нью-Йорк - Летнее)</option>
+                <option value="gmt-5">GMT-5</option>
+                <option value="gmt-6">GMT-6 (Мехико)</option>
+                <option value="gmt-7">GMT-7 (Лос-Анджелес - Летнее)</option>
+                <option value="gmt-8">GMT-8</option>
+                <option value="gmt-9">GMT-9</option>
+                <option value="gmt-10">GMT-10</option>
+                <option value="gmt-11">GMT-11</option>
+                <option value="gmt-12">GMT-12</option>
+                <option value="gmt-13">GMT-13</option>
+                <option value="gmt-14">GMT-14</option>
             </select>
 
-            <select id="container_theme_city" name="theme_city" class="inContainer" onchange="updateURL()">
-                <option value="small">Маленький (512x358)</option>
-                <option value="big">Большой (1024x716)</option>
+            <select id="language" name="language" onchange="updateURL()">
+                <option value="ru">По умолчанию (Русский)</option>
+                <option value="en">Английский</option>
             </select>
-        </div>
+
+            <div class="container">
+                <h3>Тема:</h3>
+                <select id="container_theme" name="theme" class="inContainer" onchange="updateURL()">
+                    <option value="stand">Стандартная</option>
+                    <option value="pixel-city">Пиксельный город</option>
+                </select>
+
+                <select id="container_theme_city" name="theme_city" class="inContainer" onchange="updateURL()">
+                    <option value="small">Маленький (512x358)</option>
+                    <option value="big">Большой (1024x716)</option>
+                </select>
+            </div>
 
 
-        <img id="weatherImage" src="https://weather.andcool.ru/api?place=moscow" alt="Ошибка генерации">
+            <img id="weatherImage" src="https://weather.andcool.ru/api?place=moscow" alt="Ошибка генерации">
+            <input id="url" readonly type="text" value="https://weather.andcool.ru/api?place=moscow">
 
-
-        <input id="url" readonly type="text" value="https://weather.andcool.ru/api?place=moscow">
-
-        <div id="buttons">
             <button onclick="copyURL()">Скопировать</button>
-            <button onclick="copyShortURL()">Короткий URL</button>
         </div>
-    </div>
-    <script>
-        async function load() {
-            var url = "https://ipinfo.io/json";
-            var data = await axios.get(url);
-            var obj = data.data;
-            var cityName = document.getElementById("city");
-            cityName.value = obj["city"];
-            updateURL();
-        }
-        function start() { load() };
-        start();
+        <script>
+            function copyURL() {
+                const urlText = document.querySelector("#url");
+                navigator.clipboard.writeText(urlText.value);
 
-        async function copyShortURL() {
-            var urlText = document.querySelector("#url");
-            const text = await fetch('https://clck.ru/--' + '?url=' + encodeURIComponent(urlText.value))
-                .then(response => response.text());
-            await navigator.clipboard.writeText(text);
-
-            var x = document.getElementById("snackbar");
-            x.className = "show";
-            setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
-        }
-
-        function copyURL() {
-            var urlText = document.querySelector("#url");
-            navigator.clipboard.writeText(urlText.value);
-
-            var x = document.getElementById("snackbar");
-            x.className = "show";
-            setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
-        }
-
-        function updateURL() {
-
-            var cityName = document.getElementById("city").value;
-            var timezoneSelect = document.getElementById("timezone").value;
-            var lang = document.getElementById("language").value;
-            var theme = document.getElementById("container_theme").value;
-            var themeSizeSelect = document.getElementById("container_theme_city").value;
-
-            if (cityName === "") {
-                cityName = "moscow";
+                const x = document.getElementById("snackbar");
+                x.className = "show";
+                setTimeout(function () { x.className = x.className.replace("show", ""); }, 2980);
             }
 
-            var city = "?place=" + cityName;
-            var langTxt = "&language=" + lang;
-            var themeSize = "";
-            var timezone = "";
+            function updateURL() {
 
-            if (timezoneSelect !== "") {
-                var timezone = "&timezone=" + timezoneSelect;
+                let cityName = document.getElementById("city").value;
+                const timezoneSelect = document.getElementById("timezone").value;
+                const lang = document.getElementById("language").value;
+                const theme = document.getElementById("container_theme").value;
+                const themeSizeSelect = document.getElementById("container_theme_city").value;
+
+                if (cityName === "") {
+                    cityName = "moscow";
+                }
+
+                const city = "?place=" + cityName;
+                const langTxt = "&language=" + lang;
+                let themeSize = "";
+                let timezone = "";
+
+                if (timezoneSelect !== "") {
+                    timezone = "&timezone=" + timezoneSelect;
+                }
+
+                if (theme === "pixel-city") {
+                    document.getElementById("container_theme_city").style.display = "block";
+                    themeSize = "&theme=pixel-city" + "&size=" + String(themeSizeSelect);
+                    timezone = "";
+                } else {
+                    document.getElementById("container_theme_city").style.display = "none";
+                }
+
+                document.getElementById("weatherImage").src = "https://weather.andcool.ru/api" + city + timezone + langTxt + themeSize;
+                document.getElementById("url").value = "https://weather.andcool.ru/api" + city + timezone + langTxt + themeSize;
+
             }
 
-            if (theme === "pixel-city") {
-                document.getElementById("container_theme_city").style.display = "block";
-                themeSize = "&theme=pixel-city" + "&size=" + String(themeSizeSelect);
-                timezone = "";
-            } else {
-                document.getElementById("container_theme_city").style.display = "none";
-            }
-
-            document.getElementById("weatherImage").src = "https://weather.andcool.ru/api" + city + timezone + langTxt + themeSize;
-            document.getElementById("url").value = "https://weather.andcool.ru/api" + city + timezone + langTxt + themeSize;
-
+        </script>
+    </body>
+    <style>
+        body {
+            background: #151517;
+            margin: 0;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            text-align: center;
+            padding: 1rem;
         }
 
-    </script>
-</body>
-<style>
-    .footer_text {
-        font-size: 90%;
-        margin: 0%;
-        text-align: left;
-        white-space: nowrap;
-    }
-
-    #link {
-        min-height: 100%;
-    }
-
-    body {
-        background: #151517;
-        margin: 0;
-        color: white;
-        font-family: 'Manrope', sans-serif;
-        text-align: center;
-    }
-
-    .title {
-        font-family: 'Inter', sans-serif;
-    }
-
-    .description {
-        margin-bottom: 1%;
-    }
-
-    #github_link {
-        text-decoration: underline;
-        color: #3867ff;
-    }
-
-    input {
-        padding: 3.5%;
-        width: 260px;
-        border-radius: 12px;
-        border: none;
-        background-color: #1E1E20;
-        margin-bottom: 1%;
-        color: gray;
-    }
-
-    #city {
-        padding: 0.9%;
-        width: 16%;
-        border-radius: 12px;
-        border: none;
-        background-color: #1E1E20;
-        margin-bottom: 1%;
-        color: gray;
-    }
-
-    select {
-        padding: 0.9%;
-        width: 18%;
-        border-radius: 12px;
-        border: none;
-        background-color: #1E1E20;
-        color: gray;
-        margin-bottom: 1%;
-    }
-
-    button {
-        padding: 8%;
-        border-radius: 12px;
-        border: none;
-        background-color: #1E1E20;
-        color: white;
-        margin-left: 2%;
-        cursor: pointer;
-        white-space: nowrap;
-        margin-bottom: 5%;
-    }
-
-    #main {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-
-    #buttons {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    #weatherImage {
-        margin-bottom: 1%;
-        max-width: 90%;
-    }
-
-    #url {
-        padding: 1%;
-
-    }
-
-    h3 {
-        margin: 0%;
-        margin-bottom: 1%;
-    }
-
-    .container {
-        border: 1px solid #333;
-        width: 16%;
-        border-radius: 10px;
-        margin-bottom: 1%;
-        padding: 1%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .inContainer {
-        width: 80%;
-        padding: 3%;
-        margin-bottom: 2%;
-    }
-
-    #container_theme_city {
-        display: none;
-    }
-
-    /* The snackbar - position it at the bottom and in the middle of the screen */
-    #snackbar {
-        visibility: hidden;
-        /* Hidden by default. Visible on click */
-        min-width: 250px;
-        /* Set a default minimum width */
-        margin-left: -125px;
-        /* Divide value of min-width by 2 */
-        background-color: #333;
-        /* Black background color */
-        color: #fff;
-        /* White text color */
-        text-align: center;
-        /* Centered text */
-        border-radius: 2px;
-        /* Rounded borders */
-        padding: 16px;
-        /* Padding */
-        position: fixed;
-        /* Sit on top of the screen */
-        z-index: 1;
-        /* Add a z-index if needed */
-        left: 49%;
-        /* Center the snackbar */
-        bottom: 30px;
-        /* 30px from the bottom */
-        border-radius: 15px;
-    }
-
-    /* Show the snackbar when clicking on a button (class added with JavaScript) */
-    #snackbar.show {
-        visibility: visible;
-        /* Show the snackbar */
-        /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
-    However, delay the fade out process for 2.5 seconds */
-        -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
-        animation: fadein 0.5s, fadeout 0.5s 2.5s;
-    }
-
-    /* Animations to fade the snackbar in and out */
-    @-webkit-keyframes fadein {
-        from {
-            bottom: 0;
-            opacity: 0;
+        #github_link {
+            text-decoration: underline;
+            color: #3867ff;
         }
 
-        to {
-            bottom: 30px;
-            opacity: 1;
-        }
-    }
-
-    @keyframes fadein {
-        from {
-            bottom: 0;
-            opacity: 0;
-        }
-
-        to {
-            bottom: 30px;
-            opacity: 1;
-        }
-    }
-
-    @-webkit-keyframes fadeout {
-        from {
-            bottom: 30px;
-            opacity: 1;
+        input, select {
+            padding: .5rem;
+            border-radius: 10px;
+            outline: none;
+            border: none;
+            background-color: #1E1E20;
+            border: 1px #1E1E20 solid;
+            color: inherit;
+            width: 15rem;
+            box-sizing: border-box;
+            transition: border .25s;
+            height: 2.4rem;
         }
 
-        to {
-            bottom: 0;
-            opacity: 0;
-        }
-    }
-
-    @keyframes fadeout {
-        from {
-            bottom: 30px;
-            opacity: 1;
-        }
-
-        to {
-            bottom: 0;
-            opacity: 0;
-        }
-    }
-
-
-    @media(max-width: 425px) {
-
-        .title {
-            font-size: 100%;
-        }
-
-        .description {
-            margin-left: 2%;
-            margin-right: 2%;
-            margin-bottom: 3%;
-        }
-
-        #weatherImage {
-            margin-bottom: 2%;
-        }
-
-        #timezone {
-            width: 80%;
-            padding: 3%;
-            margin-bottom: 3%;
-        }
-
-        #language {
-            width: 80%;
-            padding: 3%;
-            margin-bottom: 3%;
+        input:focus, select:focus {
+            border: 1px #666666 solid;
         }
 
         #city {
-            width: 74%;
-            padding: 3%;
-            margin-bottom: 3%;
+            padding: 0.9%;
         }
 
-        .footer_text {
-            font-size: 70%;
-            margin-left: 5%;
+        button {
+            padding: .8rem;
+            border-radius: 10px;
+            border: none;
+            background-color: #1E1E20;
+            transition: background-color .2s;
+            color: white;
+            cursor: pointer;
+            white-space: nowrap;
+            width: 15rem;
+            box-sizing: border-box;
         }
 
-        #down {
-            margin-bottom: 5%;
+        button:hover {
+            background-color: #37373b;
+        }
+
+        #main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        #weatherImage {
+            max-width: 90%;
         }
 
         #url {
-            padding: 4%;
+            padding: 1%;
+        }
+
+        h3 {
+            margin: 0%;
+            margin-bottom: 1%;
         }
 
         .container {
-            width: 80%;
+            border: 1px solid #333;
+            width: 15rem;
+            border-radius: 10px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-sizing: border-box;
         }
-    }
-</style>
 
+        .inContainer {
+            width: 80%;
+            padding: 3%;
+            margin-bottom: .5rem;
+        }
+
+        #container_theme_city {
+            display: none;
+        }
+
+        /* The snackbar - position it at the bottom and in the middle of the screen */
+        #snackbar {
+            visibility: hidden;
+            /* Hidden by default. Visible on click */
+            min-width: 250px;
+            /* Set a default minimum width */
+            margin-left: -125px;
+            /* Divide value of min-width by 2 */
+            background-color: #333;
+            /* Black background color */
+            color: #fff;
+            /* White text color */
+            text-align: center;
+            /* Centered text */
+            border-radius: 2px;
+            /* Rounded borders */
+            padding: 16px;
+            /* Padding */
+            position: fixed;
+            /* Sit on top of the screen */
+            z-index: 1;
+            /* Add a z-index if needed */
+            left: 49%;
+            /* Center the snackbar */
+            bottom: 30px;
+            /* 30px from the bottom */
+            border-radius: 15px;
+        }
+
+        /* Show the snackbar when clicking on a button (class added with JavaScript) */
+        #snackbar.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        /* Animations to fade the snackbar in and out */
+        @keyframes fadein {
+            from {
+                bottom: 0;
+                opacity: 0;
+            }
+
+            to {
+                bottom: 30px;
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeout {
+            from {
+                bottom: 30px;
+                opacity: 1;
+            }
+
+            to {
+                bottom: 0;
+                opacity: 0;
+            }
+        }
+    </style>
 </html>

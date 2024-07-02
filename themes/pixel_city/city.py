@@ -1,8 +1,9 @@
 from PIL import Image, ImageFont, ImageDraw
+from pyowm.weatherapi25 import weather as wthr
 
 
 class PixelCityTheme:
-    def __init__(self, weather_object, language: str, theme_size: str):
+    def __init__(self, weather_object: wthr.Weather, language: str, theme_size: str):
         self.supported_language = ['ru', 'en']  # TODO: add jp
         self.theme_size = theme_size
         self.weather = weather_object
@@ -22,39 +23,37 @@ class PixelCityTheme:
         # Получаем данные о погоде
         temperature_info = self.weather.temperature('celsius')
         temperature, temperature_fl = round(temperature_info['temp']), round(temperature_info['feels_like'])
-        details = self.weather.detailed_status
-        details = details[0].upper() + details[1:]
+        details = self.weather.detailed_status.capitalize()
         humidity = self.weather.humidity
         visibility_distance = round(self.weather.visibility_distance / 1000)
-        icon_name = self.weather.weather_icon_url().split('/')[-1]
 
         # Импортируем фон
-        match icon_name:
-            case '01d.png':
+        match self.weather.weather_icon_name:
+            case '01d':
                 background_name = 'day'
-            case '01n.png':
+            case '01n':
                 background_name = 'night'
-            case '02d.png':
+            case '02d':
                 background_name = 'day_few_clouds'
-            case '02n.png':
+            case '02n':
                 background_name = 'night_few_clouds'
-            case '03d.png':
+            case '03d':
                 background_name = 'day_few_clouds'
-            case '03n.png':
+            case '03n':
                 background_name = 'night_few_clouds'
-            case '04d.png' | '04n.png':
+            case '04d' | '04n':
                 background_name = 'broken_clouds'
-            case '09d.png' | '09n.png':
+            case '09d' | '09n':
                 background_name = 'shower_rain'
-            case '10d.png':
+            case '10d':
                 background_name = 'day_rain'
-            case '10n.png':
+            case '10n':
                 background_name = 'night_rain'
-            case '11d.png' | '11n.png':
+            case '11d' | '11n':
                 background_name = 'thunderstorm'
-            case '13d.png' | '13n.png':
+            case '13d' | '13n':
                 background_name = 'snow'
-            case '50n.png':
+            case '50n':
                 background_name = 'mist'
 
         if self.theme_size == 'big':

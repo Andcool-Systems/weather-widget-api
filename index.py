@@ -1,21 +1,29 @@
-from uuid import uuid4
-from json import dumps as json_encode
-from io import BytesIO
-from pyowm import OWM
-from pyowm.utils.config import get_default_config
+"""
+Created by AndcoolSystems & WavyCat, 2023
+"""
+
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from fastapi.responses import JSONResponse, Response
 from pyowm.commons.exceptions import NotFoundError
+from fastapi.middleware.cors import CORSMiddleware
+from themes.pixel_city.city import PixelCityTheme
+from pyowm.utils.config import get_default_config
 from pytz.exceptions import UnknownTimeZoneError
 from themes.default.default import DefaultTheme
-from themes.pixel_city.city import PixelCityTheme
-from traceback import print_exception
-from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse, Response
-import uvicorn
+from pyowm.weatherapi25 import weather as wthr
 from slowapi.errors import RateLimitExceeded
-from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
-from fastapi.middleware.cors import CORSMiddleware
+from traceback import print_exception
+from json import dumps as json_encode
+from fastapi import FastAPI, Request
+from dotenv import load_dotenv
+from io import BytesIO
+from uuid import uuid4
+from pyowm import OWM
+import uvicorn
 import os
+
+load_dotenv()
 
 limiter = Limiter(key_func=get_remote_address)
 app = FastAPI()
@@ -40,11 +48,15 @@ async def handler(
     language: str = "",
     theme: str = "",
     size: str = "",
+    json: bool = False
 ):
     if not place:
         return {
             "statusCode": 400,
-            "body": {"status": "error", "message": "`place` query parameter not found"},
+            "body": {
+                "status": "error",
+                "message": "`place` query parameter not found"
+            }
         }
 
     match place:
@@ -57,7 +69,7 @@ async def handler(
 
     timezone = "GMT0" if not timezone else timezone
     language = "ru" if not language else language
-    theme = "default" if not theme else theme
+    theme_name = "default" if not theme else theme
     theme_size = "small" if not size else size
 
     try:
@@ -69,15 +81,24 @@ async def handler(
         owm = OWM(os.getenv('TOKEN'), config_dict)
         mgr = owm.weather_manager()
 
-        observation = mgr.weather_at_place(location)
-        weather = observation.weather
+        observate = mgr.weather_at_place(location)
+        weather: wthr.Weather = observate.weather
+
+        if json:
+            return JSONResponse({
+                'status': 'success',
+                'message': '',
+                'temp': weather.temperature("celsius")['temp'],
+                'condition': weather.detailed_status.capitalize(),
+                'icon': weather.weather_icon_name[:2]
+                }, status_code=200)
 
         # Создаём объект темы
-        match theme:
+        match theme_name:
             case "default":
-                theme = DefaultTheme(weather, language, timezone)
+                theme_obj = DefaultTheme(weather, language, timezone)
             case "pixel-city":
-                theme = PixelCityTheme(weather, language, theme_size)
+                theme_obj = PixelCityTheme(weather, language, theme_size)
             case _:
                 return JSONResponse(
                     content={
@@ -87,37 +108,36 @@ async def handler(
                         f"Check out the available themes on the repository page on GitHub: "
                         f"https://github.com/Andcool-Systems/weather-widget-api",
                     },
-                    status_code=400,
+                    status_code=404,
                 )
 
-        if language not in theme.supported_language:
+        if language not in theme_obj.supported_language:
             return JSONResponse(
                 content={
                     "status": "error",
                     "code": "lang_not_found",
-                    "message": f"Language '{language}' not found. Use {', '.join(theme.supported_language)}",
+                    "message": f"Language '{language}' not found. Use {', '.join(theme_obj.supported_language)}",
                 },
-                status_code=400,
+                status_code=404,
             )
 
-        image = theme.image()
+        image = theme_obj.image()
     except NotFoundError:
-        return {
-            "statusCode": 400,
-            "body": {
-                "status": "error",
-                "code": "place_not_found",
-                "message": f"Place '{location}' not found.",
-            },
-        }
+        return JSONResponse({
+            "status": "error",
+            "code": "place_not_found",
+            "message": f"Place '{location}' not found.",
+            }, 
+            status_code=404
+        )
+    
     except UnknownTimeZoneError:
-        return JSONResponse(
-            content={
+        return JSONResponse({
                 "status": "error",
                 "code": "tz_not_found",
                 "message": f"Timezone '{timezone}' not found. Use gmt(a number between -14 and 12)",
             },
-            status_code=400,
+            status_code=400
         )
     except Exception as e:
         code = str(uuid4())
@@ -141,14 +161,14 @@ async def handler(
     # Получаем байты из объекта BytesIO
     image_bytes = image_bytes.getvalue()
 
-    # Кодируем байты изображения в base64
-    # encoded_image = b64encode(image_bytes).decode('utf-8')
-
     # Формируем ответ в виде словаря
     return Response(
         content=image_bytes,
-        headers={"Cache-Control": "no-cache", "Age": "0"},
-        media_type="image/png",
+        headers={
+            "Cache-Control": "no-cache", 
+            "Age": "0"
+        },
+        media_type="image/png"
     )
 
 
