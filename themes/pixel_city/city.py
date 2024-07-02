@@ -1,95 +1,125 @@
 from PIL import Image, ImageFont, ImageDraw
-from PIL.ImageFont import FreeTypeFont
+from pyowm.weatherapi25 import weather as wthr
 
 
 class PixelCityTheme:
-    def __init__(self, weather_object, language: str, theme_size: str):
-        self.supported_language = ['ru', 'en', 'it', 'es', 'sp', 'ua', 'uk', 'de', 'pt', 'ro', 'pl', 'fi', 'nl', 'fr',
-                                   'bg', 'sv', 'se', 'zh_tw', 'zh', 'zh_cn', 'tr', 'hr', 'ca']
+    def __init__(self, weather_object: wthr.Weather, language: str, theme_size: str):
+        self.supported_language = ['ru', 'en']  # TODO: add jp
         self.theme_size = theme_size
         self.weather = weather_object
         self.language = language
 
-    def draw_text(self, draw: ImageDraw, font: FreeTypeFont, text: str, y_coordinate: int):
-        text_data = font.getbbox(text=text)
-        width = 1024 if self.theme_size == 'big' else 512
-
-        for i in [(2, 2), (-2, 2), (2, -2), (-2, -2)]:
-            draw.text((width / 2 + i[0] - text_data[2] / 2, y_coordinate + i[1]), text, font=font, fill=(0, 0, 0, 128))
-
-        draw.text((width / 2 - text_data[2] / 2, y_coordinate), text, font=font, fill=(255, 255, 255, 255))
-
-    def open_fonts(self) -> [FreeTypeFont, FreeTypeFont, FreeTypeFont]:
-        font_size = (128, 64, 48) if self.theme_size == 'big' else (64, 32, 24)
-
-        poppins = ImageFont.truetype("themes/pixel_city/Poppins-SemiBold.ttf", font_size[0])
-
-        if self.language == 'zh_tw':
-            montserrat = ImageFont.truetype('themes/pixel_city/NotoSansTC-Medium.ttf', font_size[1])
-            opensans = ImageFont.truetype("themes/pixel_city/NotoSansTC-SemiBold.ttf", font_size[2])
-        elif self.language == 'zh' or self.language == 'zh_cn':
-            montserrat = ImageFont.truetype('themes/pixel_city/NotoSansSC-Medium.ttf', font_size[1])
-            opensans = ImageFont.truetype("themes/pixel_city/NotoSansSC-SemiBold.ttf", font_size[2])
-        else:
-            montserrat = ImageFont.truetype("themes/pixel_city/Montserrat-Medium.ttf", font_size[1])
-            opensans = ImageFont.truetype("themes/pixel_city/OpenSans-SemiBold.ttf", font_size[2])
-
-        return poppins, montserrat, opensans
-
     def image(self) -> Image:
+        # Импортируем все необходимое
+        if self.theme_size == 'big':
+            poppins = ImageFont.truetype("themes/pixel_city/Poppins-SemiBold.ttf", 128)
+            montserrat = ImageFont.truetype("themes/pixel_city/Montserrat-Medium.ttf", 64)
+            opensans = ImageFont.truetype("themes/pixel_city/OpenSans-SemiBold.ttf", 48)
+        else:
+            poppins = ImageFont.truetype("themes/pixel_city/Poppins-SemiBold.ttf", 64)
+            montserrat = ImageFont.truetype("themes/pixel_city/Montserrat-Medium.ttf", 32)
+            opensans = ImageFont.truetype("themes/pixel_city/OpenSans-SemiBold.ttf", 24)
+
         # Получаем данные о погоде
         temperature_info = self.weather.temperature('celsius')
         temperature, temperature_fl = round(temperature_info['temp']), round(temperature_info['feels_like'])
-        details = self.weather.detailed_status
-        details = details[0].upper() + details[1:]
+        details = self.weather.detailed_status.capitalize()
         humidity = self.weather.humidity
         visibility_distance = round(self.weather.visibility_distance / 1000)
-        icon_name = self.weather.weather_icon_url().split('/')[-1]
 
         # Импортируем фон
-        icon_to_background = {
-            '01d.png': 'day',
-            '01n.png': 'night',
-            '02d.png': 'day_few_clouds',
-            '02n.png': 'night_few_clouds',
-            '03d.png': 'day_few_clouds',
-            '03n.png': 'night_few_clouds',
-            '04d.png': 'broken_clouds',
-            '04n.png': 'broken_clouds',
-            '09d.png': 'shower_rain',
-            '09n.png': 'shower_rain',
-            '10d.png': 'day_rain',
-            '10n.png': 'night_rain',
-            '11d.png': 'thunderstorm',
-            '11n.png': 'thunderstorm',
-            '13d.png': 'snow',
-            '13n.png': 'snow',
-            '50n.png': 'mist',
-            '50d.png': 'mist'
-        }
+        match self.weather.weather_icon_name:
+            case '01d':
+                background_name = 'day'
+            case '01n':
+                background_name = 'night'
+            case '02d':
+                background_name = 'day_few_clouds'
+            case '02n':
+                background_name = 'night_few_clouds'
+            case '03d':
+                background_name = 'day_few_clouds'
+            case '03n':
+                background_name = 'night_few_clouds'
+            case '04d' | '04n':
+                background_name = 'broken_clouds'
+            case '09d' | '09n':
+                background_name = 'shower_rain'
+            case '10d':
+                background_name = 'day_rain'
+            case '10n':
+                background_name = 'night_rain'
+            case '11d' | '11n':
+                background_name = 'thunderstorm'
+            case '13d' | '13n':
+                background_name = 'snow'
+            case '50n':
+                background_name = 'mist'
 
-        background_name = icon_to_background.get(icon_name, "day")
+        if self.theme_size == 'big':
+            source = Image.open(f'themes/pixel_city/backgrounds/big/{background_name}.png')
+        else:
+            source = Image.open(f'themes/pixel_city/backgrounds/small/{background_name}.png')
 
-        source = Image.open(f'themes/pixel_city/backgrounds/{background_name}.png')
-        source = source.resize((512, 358)) if self.theme_size == 'small' else source
         draw = ImageDraw.Draw(source)
 
         # Создаём текста
         text_temperature = f'{temperature}°C'
-        poppins, montserrat, opensans = self.open_fonts()
 
         match self.language:
-            case 'ru' | 'ua' | 'uk':
-                other_info = f'fl: {temperature_fl}°C / H: {humidity}% / V: {visibility_distance} км'
-            case 'zh_tw':
-                other_info = f'感覺像: {temperature_fl}°C / 濕度: {humidity}% / 能見度: {visibility_distance} 公里'
-            case 'zh' | 'zh_cn':
-                other_info = f'感觉像: {temperature_fl}°C / 湿度: {humidity}% / 能见度: {visibility_distance} 公里'
-            case _:
+            case 'en':
                 other_info = f'fl: {temperature_fl}°C / H: {humidity}% / V: {visibility_distance} km'
+            case 'ru':
+                other_info = f'fl: {temperature_fl}°C / H: {humidity}% / V: {visibility_distance} км'
 
-        self.draw_text(draw, poppins, text_temperature, 216 if self.theme_size == 'big' else 108)
-        self.draw_text(draw, montserrat, details, 357 if self.theme_size == 'big' else 178)
-        self.draw_text(draw, opensans, other_info, 435 if self.theme_size == 'big' else 217)
+        # Рисуем
+        # Создаём текст температуры
+        temp_data = poppins.getbbox(text=text_temperature)
+
+        if self.theme_size == 'big':
+            for i in [(2, 2), (-2, 2), (2, -2), (-2, -2)]:
+                draw.text((1024 / 2 + i[0] - temp_data[2] / 2, 216 + i[1]), text_temperature, font=poppins, fill=(0, 0, 0, 100))
+
+            draw.text((1024 / 2 - temp_data[2] / 2, 216), text_temperature, font=poppins, fill=(255, 255, 255, 255))
+
+            # Создаём текст деталей погоды
+            details_data = montserrat.getbbox(text=details)
+
+            for i in [(2, 2), (-2, 2), (2, -2), (-2, -2)]:
+                draw.text((1024 / 2 + i[0] - details_data[2] / 2, 357 + i[1]), details, font=montserrat, fill=(0, 0, 0, 100))
+
+            draw.text((1024 / 2 - details_data[2] / 2, 357), details, font=montserrat, fill=(250, 250, 250, 255))
+
+            # Создаём текст прочей информации о погоде
+            other_data = opensans.getbbox(text=other_info)
+
+            for i in [(2, 2), (-2, 2), (2, -2), (-2, -2)]:
+                draw.text((1024 / 2 + i[0] - other_data[2] / 2, 435 + i[1]), other_info, font=opensans, fill=(0, 0, 0, 100))
+
+            draw.text((1024 / 2 - other_data[2] / 2, 435), other_info, font=opensans, fill=(246, 245, 245, 255))
+        else:
+            for i in [(2, 2), (-2, 2), (2, -2), (-2, -2)]:
+                draw.text((512 / 2 + i[0] - temp_data[2] / 2, 108 + i[1]), text_temperature, font=poppins,
+                          fill=(0, 0, 0, 100))
+
+            draw.text((512 / 2 - temp_data[2] / 2, 108), text_temperature, font=poppins, fill=(255, 255, 255, 255))
+
+            # Создаём текст деталей погоды
+            details_data = montserrat.getbbox(text=details)
+
+            for i in [(2, 2), (-2, 2), (2, -2), (-2, -2)]:
+                draw.text((512 / 2 + i[0] - details_data[2] / 2, 178 + i[1]), details, font=montserrat,
+                          fill=(0, 0, 0, 100))
+
+            draw.text((512 / 2 - details_data[2] / 2, 178), details, font=montserrat, fill=(250, 250, 250, 255))
+
+            # Создаём текст прочей информации о погоде
+            other_data = opensans.getbbox(text=other_info)
+
+            for i in [(2, 2), (-2, 2), (2, -2), (-2, -2)]:
+                draw.text((512 / 2 + i[0] - other_data[2] / 2, 217 + i[1]), other_info, font=opensans,
+                          fill=(0, 0, 0, 100))
+
+            draw.text((512 / 2 - other_data[2] / 2, 217), other_info, font=opensans, fill=(246, 245, 245, 255))
 
         return source
