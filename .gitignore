@@ -1,3 +1,6 @@
 /__pycache__
 /themes/__pycache__
+/themes/default/__pycache__
+/themes/pixel_city/__pycache__
 .env
+/pyowm
