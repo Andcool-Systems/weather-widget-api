@@ -5,7 +5,7 @@
 Виджет погоды в виде изображения, который вы можете установить куда угодно, например, в readme своего профиля GitHub.
 
 ## Подробнее об API
-API расположен на **GET** https://weather.wavycat.ru/api и https://weather.andcool.ru/api (можете использовать любой из них)
+API расположен на **GET** https://weather.andcool.ru/api  
 Все ответы, полученные с endpoint'а /api на домене weather.andcool.ru будут кэшироваться на 2 часа, вне зависимости от переданного cache-control хедера.
 
 > Для упрощения создания виджета, можете использовать конструктор на [сайте](https://weather.andcool.ru)
