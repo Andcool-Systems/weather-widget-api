@@ -1,21 +1,14 @@
 # Weather Widget
-![GitHub Workflow Status (API)](https://img.shields.io/github/actions/workflow/status/Andcool-Systems/weather-widget-api/deploy.yml?style=for-the-badge&logo=yandexcloud&logoColor=white&label=API%20Deploy&labelColor=1A222E&color=242B36&cacheSeconds=0)
-![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/Andcool-Systems/weather-widget-api/update-website.yml?style=for-the-badge&logo=yandexcloud&logoColor=white&label=Website%20Deploy&labelColor=1A222E&color=242B36&cacheSeconds=0)
+
 ![GitHub repo size](https://img.shields.io/github/repo-size/Andcool-Systems/weather-widget-api?style=for-the-badge&logo=github&logoColor=white&labelColor=1A222E&color=242B36&cacheSeconds=0)
 
 Виджет погоды в виде изображения, который вы можете установить куда угодно, например, в readme своего профиля GitHub.
 
-## Архитектура
-Проект имеет Serverless архитектуру типа AWS Lambda.
-Текущая реализация написана для Cloud Functions в Yandex.Cloud.
-Директория `web` никак не связана с остальным кодом, она загружается в объектное хранилище и связывается через API Gateway.
-> По какой-то причине шлюз облачных функций YC не умеет корректно обрабатывать изображения, поэтому генерация работает только через API Gateway. Возможно, это исправимая проблема.
-
 ## Подробнее об API
-API расположен на **GET** https://weather.wavycat.ru/api и https://weather.andcool.ru/api (можете использовать любой из них)
+API расположен на **GET** https://weather.andcool.ru/api  
 Все ответы, полученные с endpoint'а /api на домене weather.andcool.ru будут кэшироваться на 2 часа, вне зависимости от переданного cache-control хедера.
 
-> Для упрощения создания виджета, можете использовать конструктор на [сайте](https://weather.wavycat.ru) (либо [тут](https://weather.andcool.ru))
+> Для упрощения создания виджета, можете использовать конструктор на [сайте](https://weather.andcool.ru)
 
 ### Параметры
 | Название | Описание                                      | По умолчанию | Возможные значения  | Обязательный |
@@ -26,15 +19,6 @@ API расположен на **GET** https://weather.wavycat.ru/api и https://
 
 Некоторые темы могут иметь свои обязательные или необязательные параметры.
 Подробнее о них можно узнать в разделе [Темы](https://github.com/Andcool-Systems/weather-widget-api#темы).
-
-### Ограничение запросов
-По умолчанию, API шлюз weather.wavycat.ru и weather.andcool.ru ограничивает все запросы до указанных ниже значений.
-
-| Путь    | Ограничение |
-|---------|-------------|
-| /api    | 10 rps      |
-| /       | 100 rpm     |
-| /static | 100 rpm     |
 
 ### Ошибки API
 
