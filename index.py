@@ -18,6 +18,31 @@ from slowapi.util import get_remote_address
 from fastapi.middleware.cors import CORSMiddleware
 import os
 from dotenv import load_dotenv
+from datetime import datetime, timedelta
+
+cache = {}
+CACHE_DURATION = timedelta(minutes=10)
+
+
+def get_cache_key(*args, **kwargs):
+    return hash(tuple(args) + tuple(sorted(kwargs.items())))
+
+
+def cache_response(key, response):
+    cache[key] = {
+        "timestamp": datetime.utcnow(),
+        "response": response
+    }
+
+
+def get_cached_response(key):
+    if key in cache:
+        if datetime.utcnow() - cache[key]["timestamp"] < CACHE_DURATION:
+            return cache[key]["response"]
+        else:
+            del cache[key]
+    return None
+
 
 load_dotenv()
 
@@ -65,6 +90,16 @@ async def handler(
     theme = "default" if not theme else theme
     theme_size = "small" if not size else size
 
+    cache_key = get_cache_key(
+        location, timezone, language, theme, theme_size, json)
+    cached = get_cached_response(cache_key)
+    if cached:
+        return JSONResponse(
+            content=cached,
+            status_code=200,
+            headers={'Cache-Status': 'HIT'}
+        )
+
     try:
         # Устанавливаем язык
         config_dict = get_default_config()
@@ -78,7 +113,7 @@ async def handler(
         weather: wthr.Weather = observate.weather
 
         if json:
-            return JSONResponse({
+            response_data = {
                 'status': 'success',
                 'message': '',
                 'temp': weather.temperature("celsius")['temp'],
@@ -89,7 +124,13 @@ async def handler(
                 'wind': weather.wind(),
                 'condition': weather.detailed_status.capitalize(),
                 'icon': weather.weather_icon_name[:2]
-                }, status_code=200)
+            }
+            cache_response(cache_key, response_data)
+            return JSONResponse(
+                content=response_data,
+                status_code=200,
+                headers={'Cache-Status': 'MISSING'}
+            )
 
         # Создаём объект темы
         match theme:
@@ -140,7 +181,8 @@ async def handler(
         )
     except Exception as e:
         code = str(uuid4())
-        print(json_encode({"message": {"uuid": code, "msg": str(e)}, "level": "ERROR"}))
+        print(json_encode(
+            {"message": {"uuid": code, "msg": str(e)}, "level": "ERROR"}))
         print_exception(e)
 
         return JSONResponse(
